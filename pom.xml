@@ -23,6 +23,13 @@
     </properties>
 
     <dependencies>
+        <!-- Jetty server -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>8.1.2.v20120308</version>
+        </dependency>
+        
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -68,11 +75,11 @@
             <scope>runtime</scope>
         </dependency>
         
-        <!-- Jetty server -->
+        <!-- JSON -->
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>8.1.2.v20120308</version>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>1.9.5</version>
         </dependency>
     </dependencies>
     
@@ -84,11 +91,8 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>8.1.2.v20120308</version>
                 <configuration>
-                    <scanIntervalSeconds>5</scanIntervalSeconds>
                     <reload>automatic</reload>
-                    <webAppConfig>
-                        <contextPath>/</contextPath>
-                    </webAppConfig>
+                    <scanIntervalSeconds>5</scanIntervalSeconds>
                 </configuration>
             </plugin>
         

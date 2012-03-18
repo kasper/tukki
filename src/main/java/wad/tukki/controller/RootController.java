@@ -8,6 +8,6 @@ public class RootController {
 
     @RequestMapping("*")
     public String root() {
-        return "/static/index.html";
+        return "static/index.html";
     }
 }
