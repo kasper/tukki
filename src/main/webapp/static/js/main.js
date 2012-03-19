@@ -13,7 +13,7 @@ ProductView = Backbone.View.extend({
 
 $(document).ready(function() {
 
-  var product = new Product({id: 1});
+  var product = new Product({id: "1"});
   var productView = new ProductView({model: product});
   product.on('change', function() { productView.render() });
   product.fetch();
