@@ -25,11 +25,19 @@
     
     <!-- Heroku -->
     <beans profile="production">
+        <bean id="baseURI" class="java.net.URI">
+            <constructor-arg value="${MONGOHQ_URL}" />
+        </bean>
+        
         <bean id="mongoURI" class="com.mongodb.MongoURI">
-            <constructor-arg value="${MONGOHQ_URL}"/>
+            <constructor-arg value="${MONGOHQ_URL}" />
         </bean>
         
         <!-- Connection to MongoHQ MongoDB server -->
-        <mongo:db-factory host="#{@mongoURI.getHost()}" username="#{@mongoURI.getUsername()}" password="#{@mongoURI.getPassword()}" />
+        <mongo:db-factory host="#{@baseURI.getHost()}"
+                          post="#{@baseURI.getPort()}"
+                          dbname="#{@mongoURI.getDatabase()}"
+                          username="#{@mongoURI.getUsername()}"
+                          password="#{@mongoURI.getPassword()}" />
     </beans>
 </beans>
