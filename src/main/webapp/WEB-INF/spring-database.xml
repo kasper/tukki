@@ -35,7 +35,7 @@
         
         <!-- Connection to MongoHQ MongoDB server -->
         <mongo:db-factory host="#{@baseURI.getHost()}"
-                          post="#{@baseURI.getPort()}"
+                          port="#{@baseURI.getPort()}"
                           dbname="#{@mongoURI.getDatabase()}"
                           username="#{@mongoURI.getUsername()}"
                           password="#{@mongoURI.getPassword()}" />
