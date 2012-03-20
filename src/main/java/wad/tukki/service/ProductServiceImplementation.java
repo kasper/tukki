@@ -10,7 +10,7 @@ public class ProductServiceImplementation implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
-
+    
     @Override
     public Product addProduct(Product product) {
         
@@ -19,5 +19,12 @@ public class ProductServiceImplementation implements ProductService {
         }
         
         return productRepository.save(product);
+    }
+    
+    @Override
+    public Product findById(String id) {
+        
+        Product product = productRepository.findOne(id);
+        return product;
     }
 }
