@@ -11,6 +11,8 @@
         http://www.springframework.org/schema/data/mongo
          http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
  
+    <context:property-placeholder />
+ 
     <mongo:repositories base-package="wad.tukki.repository" />  
  
     <!-- Define the MongoTemplate which handles connectivity with MongoDB -->
@@ -33,7 +35,7 @@
             <constructor-arg value="${MONGOHQ_URL}" />
         </bean>
         
-        <!-- Connection to MongoHQ MongoDB server -->
+        <!-- Connection to MongoHQ server -->
         <mongo:db-factory host="#{@databaseURI.getHost()}"
                           port="#{@databaseURI.getPort()}"
                           dbname="#{@mongoURI.getDatabase()}"
