@@ -13,7 +13,7 @@
  
     <context:property-placeholder />
  
-    <mongo:repositories base-package="wad.tukki.repository" />  
+    <mongo:repositories base-package="wad.tukki.repositories" />  
  
     <!-- Define the MongoTemplate which handles connectivity with MongoDB -->
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
