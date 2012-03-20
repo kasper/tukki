@@ -1,6 +1,7 @@
 package wad.tukki.controllers;
 
 import java.util.List;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class ProductController {
     
     @RequestMapping(method = RequestMethod.POST, value = "product", consumes = "application/json")
     @ResponseBody
-    public Product postProduct(@RequestBody Product product) {
+    public Product postProduct(@Valid @RequestBody Product product) {
         
         return productService.save(product);
     }

@@ -1,5 +1,6 @@
 package wad.tukki.models;
 
+import javax.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,6 +10,7 @@ public class Product {
     @Id
     private String id;
     
+    @Size(min = 1)
     private String name;
 
     public String getId() {
