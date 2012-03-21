@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class RootController {
 
     @RequestMapping("/")
-    public String root() {       
+    public String root() {
+        
         return "static/index.html";
     }
 }

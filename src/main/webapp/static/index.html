@@ -9,22 +9,37 @@
     <link rel="stylesheet" type="text/css" href="static/css/style.css">
     
     <!-- JS -->
-    <script type="text/javascript" src="static/js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="static/js/underscore-min.js"></script>
-    <script type="text/javascript" src="static/js/backbone-min.js"></script>
-    <script type="text/javascript" src="static/js/mustache.js"></script>
-    <script type="text/javascript" src="static/js/main.js"></script>
+    <script type="application/javascript" src="static/js/jquery-1.7.1.min.js"></script>
+    <script type="application/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="static/js/underscore-min.js"></script>
+    <script type="application/javascript" src="static/js/backbone-min.js"></script>
+    <script type="application/javascript" src="static/js/mustache.js"></script>
+    <script type="application/javascript" src="static/js/main.js"></script>
   </head>
   <body>
   
     <div id="content" class="container">
-      
+    
     </div>
   
     <!-- Templates -->
-    <script type="text/template" id="product-template">
-      <h1>{{name}}</h1>
+    <script type="text/template" id="product-list-template">
+    
+      <form id="add-product-form" class="well form-inline">
+        <input id="add-product-form-product-name" type="text" class="span4" placeholder="Product name">
+        <button type="submit" class="btn">Add product</button>
+      </form>
+      
+      <ol id="product-list">
+      
+      </ol>
+      
+    </script>
+    
+    <script type="text/template" id="product-list-item-template">
+      
+      <li>{{name}}</li>
+      
     </script>
   </body>
 </html>
