@@ -18,21 +18,18 @@ public class ProductController {
     @RequestMapping(method = RequestMethod.GET, value = "products")
     @ResponseBody
     public List<Product> getProducts() {
-        
         return productService.findAll();
     }
     
     @RequestMapping(method = RequestMethod.GET, value = "product/{id}")
     @ResponseBody
     public Product getProduct(@PathVariable String id) {
-        
         return productService.findById(id);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "product", consumes = "application/json")
     @ResponseBody
     public Product postProduct(@Valid @RequestBody Product product) {
-        
         return productService.save(product);
     }
 }

@@ -6,10 +6,10 @@ var tukki = {
   routers: {},
   
   initialize: function() {
+  
     new tukki.routers.Main();
     Backbone.history.start();
   }
-  
 }
 
 /* DOM ready */
@@ -22,8 +22,7 @@ $(document).ready(function() {
 
 tukki.models.Product = Backbone.Model.extend({
 
-    urlRoot : 'api/product'
-  
+    urlRoot : 'api/product'  
 });
 
 /* Collections */
@@ -31,8 +30,7 @@ tukki.models.Product = Backbone.Model.extend({
 tukki.collections.Products = Backbone.Collection.extend({
   
     model: tukki.models.Product,
-    url: 'api/products'
-  
+    url: 'api/products' 
 });
 
 /* Views */
@@ -44,6 +42,7 @@ tukki.views.ProductList = Backbone.View.extend({
   },
   
   render: function() {
+  
     // Display product list
     var productListTemplate = $('#product-list-template').html();
     $(this.el).html(productListTemplate);
@@ -52,6 +51,7 @@ tukki.views.ProductList = Backbone.View.extend({
     
     // Action to save product
     $(this.el).find('#add-product-form').submit(function(event) {
+    
       event.preventDefault();
       
       // Save product
@@ -67,7 +67,7 @@ tukki.views.ProductList = Backbone.View.extend({
         
         error: function(model, response) {
           alert('Error while creating new product: ' + response.status + ' ' + response.statusText);
-        }  
+        } 
       });
     });
     
@@ -78,7 +78,6 @@ tukki.views.ProductList = Backbone.View.extend({
       new tukki.views.ProductListItem({el: listElement, model: model})
     });
   }
-
 });
 
 tukki.views.ProductListItem = Backbone.View.extend({
@@ -88,11 +87,11 @@ tukki.views.ProductListItem = Backbone.View.extend({
   },
   
   render: function() {
+  
     var productListItemTemplate = $('#product-list-item-template').html();
     var output = Mustache.render(productListItemTemplate, this.model.toJSON());
     $(this.el).append(output);
   }
-
 });
 
 /* Routers */
@@ -100,19 +99,22 @@ tukki.views.ProductListItem = Backbone.View.extend({
 tukki.routers.Main = Backbone.Router.extend({
 
   routes: {
+  
     '':             'index',
     '/':            'index',
     '/products':    'products',
-    '/product/:id': 'product'
+    '/product/:id': 'product' 
   },
   
   // Fetch products
   fetchProducts: function(callback) {
+  
     var products = new tukki.collections.Products();
     
     products.fetch({
       
       success: function() {
+      
         // Inform callback of products
         if (callback) {
           callback(products);
@@ -128,6 +130,7 @@ tukki.routers.Main = Backbone.Router.extend({
   },
   
   index: function() {
+  
     var self = this;
     
     this.fetchProducts(function(products) {
@@ -144,11 +147,15 @@ tukki.routers.Main = Backbone.Router.extend({
   },
   
   renderProductList: function(products) {
-    var productList = new tukki.views.ProductList({el: $('#content'), collection: products});
+  
+    var productList = new tukki.views.ProductList({
+    
+      el: $('#content'),
+      collection: products
+    });
     
     products.on("add", function() {
       productList.render();
     });
   }
-  
 });
