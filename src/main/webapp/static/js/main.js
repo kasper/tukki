@@ -10,6 +10,7 @@ var tukki = {
     new tukki.routers.Main();
     Backbone.history.start();
   }
+  
 }
 
 /* DOM ready */
@@ -22,15 +23,17 @@ $(document).ready(function() {
 
 tukki.models.Product = Backbone.Model.extend({
 
-    urlRoot : 'api/product'  
+  urlRoot : 'api/product'
+  
 });
 
 /* Collections */
 
 tukki.collections.Products = Backbone.Collection.extend({
+
+  model: tukki.models.Product,
+  url: 'api/products'
   
-    model: tukki.models.Product,
-    url: 'api/products' 
 });
 
 /* Views */
@@ -74,10 +77,11 @@ tukki.views.ProductList = Backbone.View.extend({
     var listElement = $(this.el).find('#product-list');
     
     // List products
-    this.collection.forEach(function(model) {
+    this.collection.each(function(model) {
       new tukki.views.ProductListItem({el: listElement, model: model})
     });
   }
+  
 });
 
 tukki.views.ProductListItem = Backbone.View.extend({
@@ -92,6 +96,7 @@ tukki.views.ProductListItem = Backbone.View.extend({
     var output = Mustache.render(productListItemTemplate, this.model.toJSON());
     $(this.el).append(output);
   }
+  
 });
 
 /* Routers */
@@ -103,7 +108,8 @@ tukki.routers.Main = Backbone.Router.extend({
     '':             'index',
     '/':            'index',
     '/products':    'products',
-    '/product/:id': 'product' 
+    '/product/:id': 'product'
+     
   },
   
   // Fetch products
@@ -148,14 +154,11 @@ tukki.routers.Main = Backbone.Router.extend({
   
   renderProductList: function(products) {
   
-    var productList = new tukki.views.ProductList({
-    
-      el: $('#content'),
-      collection: products
-    });
+    var productList = new tukki.views.ProductList({el: $('#content'), collection: products});
     
     products.on("add", function() {
       productList.render();
     });
   }
+  
 });
