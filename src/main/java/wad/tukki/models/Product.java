@@ -14,7 +14,6 @@ public class Product {
     private String id;
     
     @Size(min = 1)
-    @SafeHtml
     private String name;
 
     public String getId() {
