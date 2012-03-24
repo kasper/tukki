@@ -2,8 +2,8 @@ package wad.tukki.services;
 
 import com.mongodb.Mongo;
 import java.net.UnknownHostException;
-import junit.framework.Assert;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +33,6 @@ public class ProductServiceTest {
         product.setName("Tukki");
         product = productService.save(product);
         
-        Assert.assertEquals(product, productService.findById(product.getId()));
+        assertEquals(product, productService.findById(product.getId()));
     }
 }
