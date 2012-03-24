@@ -1,7 +1,6 @@
 package wad.tukki.models;
 
 import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.springframework.data.annotation.Id;
