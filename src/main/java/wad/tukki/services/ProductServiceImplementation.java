@@ -33,4 +33,14 @@ public class ProductServiceImplementation implements ProductService {
     public List<Product> findAll() {
         return productRepository.findAll();
     }
+    
+    @Override
+    public long count() {
+        return productRepository.count();
+    }
+    
+    @Override
+    public void delete(String id) {
+        productRepository.delete(id);
+    }
 }
