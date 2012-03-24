@@ -52,6 +52,9 @@ tukki.views.ProductList = Backbone.View.extend({
     var productListTemplate = $('#product-list-template').html();
     $(this.el).html(productListTemplate);
     
+    // Hide alert
+    $(this.el).find('#product-list-alert').hide();
+    
     var self = this;
     
     // Add product form 
@@ -59,19 +62,17 @@ tukki.views.ProductList = Backbone.View.extend({
     
       event.preventDefault();
       
-      // Save product
       var productName = $(self.el).find('#add-product-form-product-name').val().trim();
       
       // Empty product name
       if (productName.length < 1) {
         $(self.el).find('.control-group').addClass('error');
         return false;
-      } else {
-        $(self.el).find('.control-group').removeClass('error');
       }
       
       var product = new tukki.models.Product();
       
+      // Save product
       product.save({name: productName}, {
       
         success: function() {
@@ -89,18 +90,32 @@ tukki.views.ProductList = Backbone.View.extend({
       });
     });
     
+    // On keydown remove possible error alert
+    $(this.el).find('#add-product-form-product-name').keydown(function() {
+      $(self.el).find('.control-group').removeClass('error');
+    });
+    
     this.renderProducts();
   },
   
   renderProducts: function() {
   
-    var listElement = $(this.el).find('#product-list');
-    $(listElement).empty();
+      var alert = $(this.el).find('#product-list-alert');
+      
+      // No products
+      if (this.collection.length == 0) {
+        $(alert).fadeIn().addClass('alert-info').html('No products.');
+      } else {
+        $(alert).fadeOut();
+      }
+  
+      var listElement = $(this.el).find('#product-list');
+      $(listElement).empty();
     
-    // List products
-    this.collection.each(function(model) {
-      new tukki.views.ProductListItem({el: listElement, model: model})
-    });
+      // List products
+      this.collection.each(function(model) {
+        new tukki.views.ProductListItem({el: listElement, model: model})
+      });
   }
   
 });

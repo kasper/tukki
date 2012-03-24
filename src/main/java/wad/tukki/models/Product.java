@@ -1,6 +1,9 @@
 package wad.tukki.models;
 
 import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,6 +14,7 @@ public class Product {
     private String id;
     
     @Size(min = 1)
+    @SafeHtml
     private String name;
 
     public String getId() {
@@ -26,7 +30,7 @@ public class Product {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = Jsoup.clean(name, Whitelist.none());
     }
 
     @Override
