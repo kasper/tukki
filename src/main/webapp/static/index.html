@@ -26,19 +26,22 @@
     <script type="text/template" id="product-list-template">
     
       <form id="add-product-form" class="well form-inline">
-        <input id="add-product-form-product-name" type="text" class="span4" placeholder="Product name">
-        <button type="submit" class="btn">Add product</button>
+        <fieldset id="add-product-form-control-group" class="control-group">
+          <input id="add-product-form-product-name" type="text" class="span4" placeholder="Product name">
+          <button type="submit" class="btn">Add product</button>
+        </fieldset>
       </form>
       
-      <ol id="product-list">
+      <h3>Products</h3>
+      <ul id="product-list" class="nav nav-tabs nav-stacked">
       
-      </ol>
+      </ul>
       
     </script>
     
     <script type="text/template" id="product-list-item-template">
       
-      <li>{{name}}</li>
+      <li><a href="#/product/{{id}}">{{name}}</a></li>
       
     </script>
   </body>

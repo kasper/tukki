@@ -58,12 +58,21 @@ tukki.views.ProductList = Backbone.View.extend({
       event.preventDefault();
       
       // Save product
-      var productName = $(self.el).find('#add-product-form-product-name').val();
+      var productName = $(self.el).find('#add-product-form-product-name').val().trim();
+      
+      if (productName.length < 1) {
+        $(self.el).find('#add-product-form-control-group').addClass('error');
+        return false;
+      } else {
+        $(self.el).find('#add-product-form-control-group').removeClass('error');
+      }
+      
       var product = new tukki.models.Product();
       
       product.save({name: productName}, {
       
         success: function() {
+        
           // Add product to collection
           self.collection.add(product, {at: self.collection.length});
         },
@@ -74,7 +83,13 @@ tukki.views.ProductList = Backbone.View.extend({
       });
     });
     
+    this.renderProducts();
+  },
+  
+  renderProducts: function() {
+  
     var listElement = $(this.el).find('#product-list');
+    $(listElement).empty();
     
     // List products
     this.collection.each(function(model) {
@@ -105,8 +120,8 @@ tukki.routers.Main = Backbone.Router.extend({
 
   routes: {
   
-    '':             'index',
-    '/':            'index',
+    '':             'products',
+    '/':            'products',
     '/products':    'products',
     '/product/:id': 'product'
      
@@ -135,7 +150,7 @@ tukki.routers.Main = Backbone.Router.extend({
     return products;
   },
   
-  index: function() {
+  products: function() {
   
     var self = this;
     
@@ -143,21 +158,18 @@ tukki.routers.Main = Backbone.Router.extend({
       self.renderProductList(products);
     });
   },
-
-  products: function() {
-    console.log('List products');
-  },
   
   product: function(id) {
     console.log('Show product with id: ' + id);
   },
   
+  // Render products
   renderProductList: function(products) {
   
     var productList = new tukki.views.ProductList({el: $('#content'), collection: products});
     
     products.on("add", function() {
-      productList.render();
+      productList.renderProducts();
     });
   }
   
