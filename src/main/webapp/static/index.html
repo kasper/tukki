@@ -18,31 +18,52 @@
   </head>
   <body>
   
+    <!-- Navigation -->
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#">Tukki</a>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Content -->
     <div id="content" class="container">
     
     </div>
   
     <!-- Templates -->
+    
+    <!-- Product list -->
     <script type="text/template" id="product-list-template">
     
-      <form id="add-product-form" class="well form-inline">
-        <fieldset id="add-product-form-control-group" class="control-group">
+      <form id="add-product-form" class="form-inline">
+        <fieldset class="control-group">
           <input id="add-product-form-product-name" type="text" class="span4" placeholder="Product name">
           <button type="submit" class="btn">Add product</button>
         </fieldset>
       </form>
       
-      <h3>Products</h3>
+      <h1>Products</h1>
+      
       <ul id="product-list" class="nav nav-tabs nav-stacked">
       
       </ul>
       
     </script>
     
+    <!-- Product list item -->
     <script type="text/template" id="product-list-item-template">
       
       <li><a href="#/product/{{id}}">{{name}}</a></li>
       
+    </script>
+    
+    <!-- Product -->
+    <script type="text/template" id="product-template">
+    
+      <h1>{{name}}</h1>
+    
     </script>
   </body>
 </html>
