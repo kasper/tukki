@@ -1,10 +1,10 @@
 package wad.tukki.models;
 
-public class JSONResponse {
+public class JSONMessage {
 
     private String message;
     
-    public JSONResponse(String message) {
+    public JSONMessage(String message) {
         this.message = message;
     }
     

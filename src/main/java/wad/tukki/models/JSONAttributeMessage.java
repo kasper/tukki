@@ -1,10 +1,10 @@
 package wad.tukki.models;
 
-public class JSONErrorResponse extends JSONResponse {
+public class JSONAttributeMessage extends JSONMessage {
 
     private String attribute;
     
-    public JSONErrorResponse(String attribute, String message) {
+    public JSONAttributeMessage(String attribute, String message) {
         
         super(message);
         this.attribute = attribute;
