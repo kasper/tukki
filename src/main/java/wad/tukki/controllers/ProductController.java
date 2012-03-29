@@ -10,7 +10,7 @@ import wad.tukki.services.ProductService;
 
 @Controller
 @RequestMapping("api")
-public class ProductController {
+public class ProductController extends BaseController {
 
     @Autowired
     ProductService productService;
