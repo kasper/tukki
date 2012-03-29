@@ -10,7 +10,7 @@ public class Product {
     @Id
     private String id;
     
-    @NotBlank
+    @NotBlank(message = "Name may not be empty.")
     private String name;
 
     public String getId() {
