@@ -12,12 +12,13 @@
     <beans:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
 
     <http use-expressions="true" entry-point-ref="authenticationEntryPoint">
+        <intercept-url pattern="/api/login" access="permitAll" />
         <intercept-url pattern="/api/**" access="hasRole('user')" />
         <intercept-url pattern="/**" access="permitAll" />
     </http>
     
     <!-- Dummy authentication provider -->
-    <authentication-manager>
+    <authentication-manager alias="authenticationManager">
         <authentication-provider>
             <user-service>
                 <user name="kasper" password="repsak" authorities="user" />
