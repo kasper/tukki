@@ -62,7 +62,7 @@ tukki.views.ProductList = Backbone.View.extend({
     
       event.preventDefault();
       
-      var productName = $(self.el).find('#add-product-form-product-name').val().trim();
+      var productName = $(self.el).find('[data-id="name"]').val().trim();
       
       // Empty product name
       if (productName.length < 1) {
