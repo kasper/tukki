@@ -18,7 +18,4 @@
     
     <!-- Static files -->
     <mvc:resources mapping="/static/**" location="/static/"/>
-    
-    <!-- Database configuration -->
-    <import resource="spring-database.xml" />
 </beans>
