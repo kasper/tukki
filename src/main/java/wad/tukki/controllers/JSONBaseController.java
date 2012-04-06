@@ -7,21 +7,13 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import wad.tukki.models.JSONAttributeMessage;
 import wad.tukki.models.JSONMessage;
 
 public abstract class JSONBaseController {
-    
-    @RequestMapping("*")
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public JSONMessage handleNotFound() {
-        return new JSONMessage("Not found.");
-    } 
-     
+        
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

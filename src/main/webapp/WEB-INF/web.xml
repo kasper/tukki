@@ -62,7 +62,18 @@
         <servlet-name>spring-front-controller</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-     
+    
+    <!-- Errors -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/api/404</location>
+    </error-page>
+    
+    <error-page>
+        <error-code>403</error-code>
+        <location>/api/403</location>
+    </error-page>
+    
     <session-config>
         <session-timeout>
             30
