@@ -8,6 +8,7 @@ var tukki = {
   initialize: function() {
   
     new tukki.routers.Main();
+    new tukki.routers.Product();
     Backbone.history.start();
   }
   
@@ -159,6 +160,24 @@ tukki.routers.Main = Backbone.Router.extend({
 
   routes: {
   
+    '/login': 'login',
+  
+  },
+
+  login: function() {
+
+    $('#login-modal').modal({
+      backdrop: 'static',
+      keyboard: false
+    });
+  }
+  
+});
+
+tukki.routers.Product = Backbone.Router.extend({
+
+  routes: {
+  
     '':             'products',
     '/':            'products',
     '/products':    'products',
@@ -171,6 +190,8 @@ tukki.routers.Main = Backbone.Router.extend({
   
     var products = new tukki.collections.Products();
     
+    var self = this;
+    
     products.fetch({
       
       success: function() {
@@ -182,6 +203,13 @@ tukki.routers.Main = Backbone.Router.extend({
       },
       
       error: function(model, response) {
+      
+        // Authenticate
+        if (response.status == 403) {
+          self.navigate('#/login', {trigger: true});
+          return;
+        }
+        
         alert('Error while loading products: ' + response.status + ' ' + response.statusText);
       }
     });
