@@ -7,7 +7,7 @@ var tukki = {
   
   initialize: function() {
   
-    new tukki.routers.Main();
+    tukki.app = new tukki.routers.Main();
     new tukki.routers.Product();
     Backbone.history.start();
   }
@@ -39,6 +39,97 @@ tukki.collections.Products = Backbone.Collection.extend({
 
 /* Views */
 
+tukki.views.Login = Backbone.View.extend({
+
+  initialize: function() {
+    this.render();
+  },
+  
+  render: function() {
+    
+    // Display login
+    var loginTemplate = $('#login-template').html();
+    $(this.el).html(loginTemplate);
+    
+    // Hide alert
+    this.$('[data-id="login-alert"]').hide();
+    
+    var self = this;
+    
+    // On keydown remove possible error state of inputs
+    this.$('[data-id="username"]').keydown(function() {
+      self.$('.control-group').removeClass('error');
+    });
+    
+    this.$('[data-id="password"]').keydown(function() {
+      self.$('.control-group').removeClass('error');
+    });
+    
+    // Show modal
+    $(this.el).modal({
+    
+      backdrop: 'static',
+      keyboard: false
+    
+    });
+    
+    // Login
+    this.$('[data-id="login"]').click(function(event) {
+    
+      event.preventDefault();
+      
+      var username = self.$('[data-id="username"]')
+                         .val()
+                         .trim();
+                         
+      var password = self.$('[data-id="password"]')
+                         .val()
+                         .trim();
+      
+      // Send login request
+      $.ajax({
+        
+        type: 'POST',
+        url: '/api/login',
+        data: JSON.stringify({username: username, password: password}),
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        
+        // Request succeeded
+        success: function(data) {
+
+          // Bad credentials
+          if (data.code == 401) {
+          
+            self.$('.control-group')
+                .addClass('error');
+            
+            self.$('[data-id="login-alert"]')
+                .fadeIn()
+                .addClass('alert-error')
+                .html(data.message);
+            
+            return;
+          }
+          
+          // Authenticated
+          if (data.code == 402) {
+            
+            $(self.el).modal('hide');
+            tukki.app.navigate('/', {trigger: true});
+          }
+        },
+        
+        // Request failed
+        error: function(jqXHR, textStatus, errorThrown) {
+          alert('Error while logging in: ' + errorThrown);
+        }
+      });
+    });
+  }
+
+});
+
 tukki.views.ProductList = Backbone.View.extend({
 
   initialize: function() {
@@ -47,29 +138,23 @@ tukki.views.ProductList = Backbone.View.extend({
   
   render: function() {
   
-    $(this.el).empty();
-  
     // Display product list
     var productListTemplate = $('#product-list-template').html();
     $(this.el).html(productListTemplate);
     
     // Hide alert
-    $(this.el).find('#product-list-alert').hide();
+    this.$('[data-id="alert"]').hide();
     
     var self = this;
     
-    // Add product form 
-    $(this.el).find('#add-product-form').submit(function(event) {
+    // Add product
+    this.$('#add-product-form').submit(function(event) {
     
       event.preventDefault();
       
-      var productName = $(self.el).find('[data-id="name"]').val().trim();
-      
-      // Empty product name
-      if (productName.length < 1) {
-        $(self.el).find('.control-group').addClass('error');
-        return false;
-      }
+      var productName = self.$('[data-id="name"]')
+                            .val()
+                            .trim();
       
       var product = new tukki.models.Product();
       
@@ -82,18 +167,32 @@ tukki.views.ProductList = Backbone.View.extend({
           self.collection.add(product, {at: self.collection.length});
           
           // Empty input for product name
-          $(self.el).find('#add-product-form-product-name').val('');
+          self.$('[data-id="name"]').val('');
         },
         
         error: function(model, response) {
+        
+          if (response.status == 400) {
+            var validationErrors = JSON.parse(response.responseText);
+            
+            $.each(validationErrors, function() {
+            
+              if (this.code == 203) {
+                self.$('.control-group').addClass('error');
+              }
+            });
+            
+            return;
+          }
+          
           alert('Error while creating new product: ' + response.status + ' ' + response.statusText);
         }
       });
     });
     
-    // On keydown remove possible error alert
-    $(this.el).find('#add-product-form-product-name').keydown(function() {
-      $(self.el).find('.control-group').removeClass('error');
+    // On keydown remove possible error state of inputs
+    this.$('[data-id="name"]').keydown(function() {
+      self.$('.control-group').removeClass('error');
     });
     
     this.renderProducts();
@@ -101,19 +200,22 @@ tukki.views.ProductList = Backbone.View.extend({
   
   renderProducts: function() {
   
-      var alert = $(this.el).find('#product-list-alert');
+      var alert = this.$('[data-id="alert"]');
       
       // No products
       if (this.collection.length == 0) {
-        $(alert).fadeIn().addClass('alert-info').html('No products.');
+      
+        $(alert).fadeIn()
+                .addClass('alert-info')
+                .html('No products.');
       } else {
         $(alert).fadeOut();
       }
   
-      var listElement = $(this.el).find('#product-list');
+      var listElement = this.$('#product-list');
       $(listElement).empty();
     
-      // List products
+      // Display each list item
       this.collection.each(function(model) {
         new tukki.views.ProductListItem({el: listElement, model: model})
       });
@@ -129,6 +231,7 @@ tukki.views.ProductListItem = Backbone.View.extend({
   
   render: function() {
   
+    // Display list item
     var productListItemTemplate = $('#product-list-item-template').html();
     var output = Mustache.render(productListItemTemplate, this.model.toJSON());
     $(this.el).append(output);
@@ -143,8 +246,6 @@ tukki.views.Product = Backbone.View.extend({
   },
   
   render: function() {
-  
-    $(this.el).empty();
     
     // Display product
     var productTemplate = $('#product-template').html();
@@ -161,15 +262,31 @@ tukki.routers.Main = Backbone.Router.extend({
   routes: {
   
     '/login': 'login',
+    '/logout': 'logout'
   
   },
 
+  // Login
   login: function() {
-
-    $('#login-modal').modal({
-      backdrop: 'static',
-      keyboard: false
+    this.renderLogin();
+  },
+  
+  // Logout
+  logout: function() {
+  
+    var self = this;
+    
+    // Send logout request
+    $.get('/api/logout', function() {
+      
+      $('#content').empty();
+      self.navigate('/', {trigger: true});
     });
+  },
+  
+  // Render login
+  renderLogin: function() {
+    var loginView = new tukki.views.Login({el: $('#modal')})
   }
   
 });
@@ -204,7 +321,7 @@ tukki.routers.Product = Backbone.Router.extend({
       
       error: function(model, response) {
       
-        // Authenticate
+        // Invoke authentication
         if (response.status == 403) {
           self.navigate('#/login', {trigger: true});
           return;
@@ -236,7 +353,7 @@ tukki.routers.Product = Backbone.Router.extend({
         
       error: function(model, response) {
       
-        // Authenticate
+        // Invoke authentication
         if (response.status == 403) {
           self.navigate('#/login', {trigger: true});
           return;

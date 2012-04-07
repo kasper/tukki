@@ -46,6 +46,7 @@ public abstract class JSONBaseController {
     @ResponseBody
     public JSONMessage handleException(Exception exception) {
         
+        System.out.println("handleException");
         System.out.println(exception);
         return new JSONMessage(JSONMessageCode.INTERNAL_ERROR, exception.getMessage());
     }

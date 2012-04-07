@@ -9,12 +9,22 @@ import org.codehaus.jackson.map.TypeSerializer;
 
 public enum JSONMessageCode implements JsonSerializableWithType {
     
-    GENERAL_ERROR (1),
-    INTERNAL_ERROR (2),
-    PARSING_ERROR (3),
-    AUTHENTICATION_REQUIRED (5),
-    NOT_FOUND (6),
-    VALIDATION_ERROR (7);
+    // Messages
+    GENERAL_MESSAGE (100),
+    
+    // Errors
+    GENERAL_ERROR (200),
+    INTERNAL_ERROR (201),
+    PARSING_ERROR (202),
+    VALIDATION_ERROR (203),
+    
+    // Status
+    NOT_FOUND (300),
+    
+    // Authentication
+    AUTHENTICATION_REQUIRED (400),
+    BAD_CREDENTIALS (401),
+    AUTHENTICATED (402);
     
     private int code;
     
