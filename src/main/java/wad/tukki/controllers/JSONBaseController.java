@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import wad.tukki.models.JSONAttributeMessage;
 import wad.tukki.models.JSONMessage;
+import wad.tukki.models.JSONMessageCode;
 
 public abstract class JSONBaseController {
         
@@ -24,7 +25,9 @@ public abstract class JSONBaseController {
         // Validation errors
         for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
             
-            JSONAttributeMessage error = new JSONAttributeMessage(fieldError.getField(), fieldError.getDefaultMessage());
+            JSONAttributeMessage error = new JSONAttributeMessage(JSONMessageCode.VALIDATION_ERROR,
+                                                                  fieldError.getField(),
+                                                                  fieldError.getDefaultMessage());
             errors.add(error);
         }
         
@@ -35,7 +38,7 @@ public abstract class JSONBaseController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public JSONMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        return new JSONMessage("Could not read JSON.");
+        return new JSONMessage(JSONMessageCode.PARSING_ERROR, "Could not read JSON.");
     }
     
     @ExceptionHandler(Exception.class)
@@ -44,6 +47,6 @@ public abstract class JSONBaseController {
     public JSONMessage handleException(Exception exception) {
         
         System.out.println(exception);
-        return new JSONMessage(exception.getMessage());
+        return new JSONMessage(JSONMessageCode.INTERNAL_ERROR, exception.getMessage());
     }
 }

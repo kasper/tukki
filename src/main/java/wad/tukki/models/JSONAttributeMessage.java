@@ -4,9 +4,9 @@ public class JSONAttributeMessage extends JSONMessage {
 
     private String attribute;
     
-    public JSONAttributeMessage(String attribute, String message) {
+    public JSONAttributeMessage(JSONMessageCode code, String attribute, String message) {
         
-        super(message);
+        super(code, message);
         this.attribute = attribute;
     }
     
