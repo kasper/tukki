@@ -222,6 +222,8 @@ tukki.routers.Product = Backbone.Router.extend({
   
     var product = new tukki.models.Product({id: productId});
     
+    var self = this;
+    
     product.fetch({
     
       success: function() {
@@ -233,6 +235,13 @@ tukki.routers.Product = Backbone.Router.extend({
       },
         
       error: function(model, response) {
+      
+        // Authenticate
+        if (response.status == 403) {
+          self.navigate('#/login', {trigger: true});
+          return;
+        }
+      
         alert('Error while loading product: ' + response.status + ' ' + response.statusText);
       }
     });
