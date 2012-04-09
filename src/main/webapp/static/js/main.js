@@ -41,6 +41,14 @@ tukki.collections.Products = Backbone.Collection.extend({
 
 tukki.views.Login = Backbone.View.extend({
 
+  events: {
+  
+    'click [data-id="login"]':      'login',
+    'keydown [data-id="username"]': 'keydown',
+    'keydown [data-id="password"]': 'keydown'
+    
+  },
+
   initialize: function() {
     this.render();
   },
@@ -54,17 +62,6 @@ tukki.views.Login = Backbone.View.extend({
     // Hide alert
     this.$('[data-id="login-alert"]').hide();
     
-    var self = this;
-    
-    // On keydown remove possible error state of inputs
-    this.$('[data-id="username"]').keydown(function() {
-      self.$('.control-group').removeClass('error');
-    });
-    
-    this.$('[data-id="password"]').keydown(function() {
-      self.$('.control-group').removeClass('error');
-    });
-    
     // Show modal
     $(this.el).modal({
     
@@ -72,65 +69,81 @@ tukki.views.Login = Backbone.View.extend({
       keyboard: false
     
     });
+  },
+  
+  // Login
+  login: function() {
     
-    // Login
-    this.$('[data-id="login"]').click(function(event) {
-    
-      event.preventDefault();
+    event.preventDefault();
       
-      var username = self.$('[data-id="username"]')
-                         .val()
-                         .trim();
+    var username = this.$('[data-id="username"]')
+                       .val()
+                       .trim();
                          
-      var password = self.$('[data-id="password"]')
-                         .val()
-                         .trim();
+    var password = this.$('[data-id="password"]')
+                       .val()
+                       .trim();
+                       
+    var self = this;               
+    
+    // Send login request
+    $.ajax({
       
-      // Send login request
-      $.ajax({
-        
-        type: 'POST',
-        url: '/api/login',
-        data: JSON.stringify({username: username, password: password}),
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8',
-        
-        // Request succeeded
-        success: function(data) {
+      type: 'POST',
+      url: '/api/login',
+      data: JSON.stringify({username: username, password: password}),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
+      
+      // Request succeeded
+      success: function(data) {
 
-          // Bad credentials
-          if (data.code == 8) {
-          
-            self.$('.control-group')
-                .addClass('error');
-            
-            self.$('[data-id="login-alert"]')
-                .fadeIn()
-                .addClass('alert-error')
-                .html(data.message);
-            
-            return;
-          }
-          
-          // Authenticated
-          if (data.code == 9) {
-            
-            $(self.el).modal('hide');
-            tukki.app.navigate('/', {trigger: true});
-          }
-        },
+        // Bad credentials
+        if (data.code == 8) {
         
-        // Request failed
-        error: function(jqXHR, textStatus, errorThrown) {
-          alert('Error while logging in: ' + errorThrown);
+          self.$('.control-group')
+              .addClass('error');
+          
+          self.$('[data-id="login-alert"]')
+              .fadeIn()
+              .addClass('alert-error')
+              .html(data.message);
+          
+          return;
         }
-      });
+        
+        // Authenticated
+        if (data.code == 9) {
+          
+          $(self.el).modal('hide');
+          tukki.app.navigate('/', {trigger: true});
+        }
+      },
+      
+      // Request failed
+      error: function() {
+      
+        alert('Error while logging in.');
+      }
     });
+  },
+  
+  keydown: function() {
+  
+    // On keydown remove possible error state of inputs
+    self.$('.control-group').removeClass('error');
   }
 
 });
 
 tukki.views.ProductList = Backbone.View.extend({
+
+  events: {
+  
+    'submit #add-product-form': 'addProduct',
+    'keydown [data-id="name"]': 'keydown'
+  
+  },
 
   initialize: function() {
     this.render();
@@ -144,58 +157,6 @@ tukki.views.ProductList = Backbone.View.extend({
     
     // Hide alert
     this.$('[data-id="alert"]').hide();
-    
-    var self = this;
-    
-    // Add product
-    this.$('#add-product-form').submit(function(event) {
-    
-      event.preventDefault();
-      
-      var productName = self.$('[data-id="name"]')
-                            .val()
-                            .trim();
-      
-      var product = new tukki.models.Product();
-      
-      // Save product
-      product.save({name: productName}, {
-      
-        success: function() {
-        
-          // Add product to collection
-          self.collection.add(product, {at: self.collection.length});
-          
-          // Empty input for product name
-          self.$('[data-id="name"]').val('');
-        },
-        
-        error: function(model, response) {
-        
-          if (response.status == 400) {
-            
-            var errors = JSON.parse(response.responseText).errors;
-            
-            if (errors.name) {
-            
-              // Validation error for name
-              if (errors.name.code == 6) {
-                self.$('.control-group').addClass('error');
-              }
-            }
-            
-            return;
-          }
-          
-          alert('Error while creating new product: ' + response.status + ' ' + response.statusText);
-        }
-      });
-    });
-    
-    // On keydown remove possible error state of inputs
-    this.$('[data-id="name"]').keydown(function() {
-      self.$('.control-group').removeClass('error');
-    });
     
     this.renderProducts();
   },
@@ -221,6 +182,59 @@ tukki.views.ProductList = Backbone.View.extend({
       this.collection.each(function(model) {
         new tukki.views.ProductListItem({el: listElement, model: model})
       });
+  },
+  
+  // Add product
+  addProduct: function() {
+  
+    event.preventDefault();
+      
+    var productName = this.$('[data-id="name"]')
+                          .val()
+                          .trim();
+    
+    var product = new tukki.models.Product();
+    
+    var self = this;
+    
+    // Save product
+    product.save({name: productName}, {
+    
+      success: function() {
+      
+        // Add product to collection
+        self.collection.add(product, {at: self.collection.length});
+        
+        // Empty input for product name
+        self.$('[data-id="name"]').val('');
+      },
+      
+      error: function(model, response) {
+      
+        if (response.status == 400) {
+          
+          var errors = JSON.parse(response.responseText).errors;
+          
+          if (errors.name) {
+          
+            // Validation error for name
+            if (errors.name.code == 6) {
+              self.$('.control-group').addClass('error');
+            }
+          }
+          
+          return;
+        }
+        
+        alert('Error while creating new product: ' + response.status + ' ' + response.statusText);
+      }
+    });
+  },
+  
+  keydown: function() {
+    
+    // On keydown remove possible error state of inputs
+    self.$('.control-group').removeClass('error'); 
   }
   
 });
