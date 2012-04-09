@@ -18,7 +18,7 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
     private AuthenticationManager authenticationManager;
     
     @Override
-    public void login(User user) {
+    public void authenticate(User user) {
         
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -28,7 +28,31 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
     }
 
     @Override
-    public void logout() {
+    public void invalidate() {
         SecurityContextHolder.clearContext();
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null) {
+            return false;
+        }
+        
+        return authentication.isAuthenticated();
+    }
+
+    @Override
+    public String getUsername() {
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null) {
+            return null;
+        }
+        
+        return authentication.getName();
     }
 }

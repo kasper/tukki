@@ -4,6 +4,8 @@ import wad.tukki.models.User;
 
 public interface AuthenticationService {
 
-    public void login(User user);
-    public void logout();
+    public void authenticate(User user);
+    public void invalidate();
+    public boolean isAuthenticated();
+    public String getUsername();
 }

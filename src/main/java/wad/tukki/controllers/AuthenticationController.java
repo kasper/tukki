@@ -24,7 +24,7 @@ public class AuthenticationController extends JSONBaseController {
     @ResponseBody
     public JSONMessage login(@RequestBody User user) {
         
-        authenticationService.login(user);
+        authenticationService.authenticate(user);
         
         return new JSONMessage(JSONMessageCode.AUTHENTICATED, "Authenticated.");
     }
@@ -33,7 +33,7 @@ public class AuthenticationController extends JSONBaseController {
     @ResponseBody
     public JSONMessage logout() {
         
-        authenticationService.logout();
+        authenticationService.invalidate();
         
         return new JSONMessage(JSONMessageCode.OK, "Logged out.");
     }
