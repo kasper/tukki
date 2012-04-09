@@ -1,15 +1,11 @@
 package wad.tukki.models;
 
 import java.util.List;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class User {
-
-    @Id
-    private String id;
+public class User extends MongoObject {
     
     private String username;
     private String password;
@@ -17,14 +13,6 @@ public class User {
     @DBRef
     private List<UserRole> roles;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-    
     public String getPassword() {
         return password;
     }
@@ -48,6 +36,15 @@ public class User {
     public void setRoles(List<UserRole> roles) {
         this.roles = roles;
     }
+    
+    public void addRole(UserRole role) {
+        
+        if (roles.contains(role)) {
+            return;
+        }
+        
+        roles.add(role);
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -61,7 +58,7 @@ public class User {
         }
         
         final User other = (User) obj;
-        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+        if ((this.getId() == null) ? (other.getId() != null) : !this.getId().equals(other.getId())) {
             return false;
         }
         
@@ -72,7 +69,7 @@ public class User {
     public int hashCode() {
         
         int hash = 7;
-        hash = 89 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 89 * hash + (this.getId() != null ? this.getId().hashCode() : 0);
         
         return hash;
     }

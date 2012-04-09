@@ -9,10 +9,10 @@ public class ProductTest {
     public void equalProducts() {
         
         Product a = new Product();
-        a.setId("test");
+        a.setId("testProduct");
         
         Product b = new Product();
-        b.setId("test");
+        b.setId("testProduct");
         
         assertTrue(a.equals(b));
     }
