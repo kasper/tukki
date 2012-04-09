@@ -2,9 +2,11 @@ package wad.tukki.services;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import wad.tukki.models.User;
 import wad.tukki.repositories.UserRepository;
 
+@Service
 public class UserServiceImplementation implements UserService {
 
     @Autowired
