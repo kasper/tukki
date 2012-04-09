@@ -22,9 +22,15 @@ $(document).ready(function() {
 
 /* Models */
 
+tukki.models.User = Backbone.Model.extend({
+
+  urlRoot: 'api/user'
+
+});
+
 tukki.models.Product = Backbone.Model.extend({
 
-  urlRoot : 'api/product'
+  urlRoot: 'api/product'
   
 });
 
@@ -60,7 +66,7 @@ tukki.views.Login = Backbone.View.extend({
     $(this.el).html(loginTemplate);
     
     // Hide alert
-    this.$('[data-id="login-alert"]').hide();
+    this.$('[data-id="alert"]').hide();
     
     // Show modal
     $(this.el).modal({
@@ -104,7 +110,7 @@ tukki.views.Login = Backbone.View.extend({
           self.$('.control-group')
               .addClass('error');
           
-          self.$('[data-id="login-alert"]')
+          self.$('[data-id="alert"]')
               .addClass('alert-error')
               .html('<b>Oh snap!</b> ' + data.message)
               .fadeIn();
@@ -137,6 +143,98 @@ tukki.views.Login = Backbone.View.extend({
   
     // On keydown remove possible error state of inputs
     self.$('.control-group').removeClass('error');
+  }
+
+});
+
+tukki.views.Register = Backbone.View.extend({
+
+  events: {
+  
+    'click [data-id="register"]': 'register'
+  
+  },
+
+  initialize: function() {
+    this.render();
+  },
+  
+  render: function() {
+  
+    // Display register
+    var registerTemplate = $('#register-template').html();
+    $(this.el).html(registerTemplate);
+    
+    // Hide alert
+    this.$('[data-id="alert"]').hide();
+    
+    // Show modal if needed
+    $(this.el).modal({
+    
+      backdrop: 'static',
+      keyboard: false
+    
+    });
+  },
+  
+  register: function() {
+  
+    event.preventDefault();
+  
+    var username = this.$('[data-id="username"]')
+                       .val()
+                       .trim();
+                         
+    var password = this.$('[data-id="password"]')
+                       .val()
+                       .trim();
+     
+    var user = new tukki.models.User();
+                       
+    var self = this;
+    
+    // Save user
+    user.save({username: username, password: password}, {
+    
+      success: function() {
+        console.log('User registered!');
+      },
+      
+      error: function(model, response) {
+      
+        if (response.status == 400) {
+          
+          self.$('[data-id="alert"]').html('<b>Oh snap!</b> ');
+          var errors = JSON.parse(response.responseText).errors;
+          
+          if (errors.username) {
+          
+            // Validation error for username
+            if (errors.username.code == 6) {
+              self.$('.control-group').addClass('error');
+              self.$('[data-id="alert"]').addClass('alert-error')
+                                              .append(errors.username.message + ' ')
+                                              .fadeIn();
+            }
+          }
+          
+          if (errors.password) {
+            
+            // Validation error for password
+            if (errors.password.code == 6) {
+                self.$('.control-group').addClass('error');
+                self.$('[data-id="alert"]').addClass('alert-error')
+                                              .append(errors.password.message)
+                                              .fadeIn();
+            }
+          }
+          
+          return;
+        }
+        
+        alert('Error while creating new user: ' + response.status + ' ' + response.statusText);
+      }
+    });
   }
 
 });
@@ -289,8 +387,9 @@ tukki.routers.Main = Backbone.Router.extend({
 
   routes: {
   
-    '/login': 'login',
-    '/logout': 'logout'
+    '/login':    'login',
+    '/logout':   'logout',
+    '/register': 'register'
   
   },
 
@@ -312,9 +411,19 @@ tukki.routers.Main = Backbone.Router.extend({
     });
   },
   
+  // Register
+  register: function() {
+    this.renderRegister();
+  },
+  
   // Render login
   renderLogin: function() {
-    var loginView = new tukki.views.Login({el: $('#modal')})
+    new tukki.views.Login({el: $('#modal')});
+  },
+  
+  // Render register
+  renderRegister: function() {
+    new tukki.views.Register({el: $('#modal')});
   }
   
 });
@@ -426,7 +535,7 @@ tukki.routers.Product = Backbone.Router.extend({
   
   // Render product
   renderProduct: function(product) {
-    var productView = new tukki.views.Product({el: $('#content'), model: product});
+    new tukki.views.Product({el: $('#content'), model: product});
   }
   
 });

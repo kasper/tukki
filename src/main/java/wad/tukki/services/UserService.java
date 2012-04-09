@@ -11,4 +11,5 @@ public interface UserService {
     public List<User> findAll();
     public long count();
     public void delete(String id);
+    public User addUserRole(String userId, String name);
 }

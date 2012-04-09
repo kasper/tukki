@@ -31,7 +31,7 @@ public class AuthenticationServiceTest {
         
         User user = new User();
         user.setUsername("kasper");
-        user.setPassword("repsak");
+        user.setPassword("repsakkasper");
         
         authenticationService.authenticate(user);
         
@@ -53,7 +53,7 @@ public class AuthenticationServiceTest {
         
         User user = new User();
         user.setUsername("kasper");
-        user.setPassword("repsak");
+        user.setPassword("repsakkasper");
         
         authenticationService.authenticate(user);
         authenticationService.invalidate();
@@ -71,7 +71,7 @@ public class AuthenticationServiceTest {
         
         User user = new User();
         user.setUsername("kasper");
-        user.setPassword("repsak");
+        user.setPassword("repsakkasper");
         
         authenticationService.authenticate(user);
         

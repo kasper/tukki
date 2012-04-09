@@ -74,19 +74,65 @@
       
       <div class="modal-body">
       
-        <div data-id="login-alert" class="alert"></div>
+        <div class="alert" data-id="alert"></div>
               
         <form class="form-vertical-block">
           <fieldset class="control-group">
-            <input data-id="username" type="text" class="input-large" placeholder="Username">
-            <input data-id="password" type="password" class="input-large" placeholder="Password">
+            <input type="text" class="input-large" data-id="username" placeholder="Username">
+            <input type="password" class="input-large" data-id="password" placeholder="Password">
           </fieldset>
         </form>
         
       </div>
       
       <div class="modal-footer">
-        <a data-id="login" href="#" class="btn btn-primary">Login</a>
+        <p class="pull-left">No username? <a href="#/register">Register</a>.</p>
+        <a href="#" class="btn btn-primary" data-id="login">Login</a>
+      </div>
+    
+    </script>
+    
+    <!-- Register -->
+    <script type="text/template" id="register-template">
+    
+      <div class="modal-header">
+        <h3>Register</h3>
+      </div>
+      
+      <div class="modal-body">
+        
+        <div class="alert" data-id="alert"></div>
+        
+        <form class="form-horizontal">
+          <fieldset>
+          
+            <div class="control-group">
+            
+              <label class="control-label" for="username">Username</label>
+              
+              <div class="controls">
+                <input type="text" class="input-xlarge" data-id="username">
+              </div>
+              
+            </div>
+            
+            <div class="control-group">
+            
+              <label class="control-label" for="username">Password</label>
+              
+              <div class="controls">
+                <input type="password" class="input-xlarge" data-id="password">
+                <p class="help-block">At least 10 characters long.</p>
+              </div>
+            </div>
+            
+          </fieldset>
+        </form>
+        
+      </div>
+      
+      <div class="modal-footer">
+        <a href="#" class="btn btn-success" data-id="register">Register</a>
       </div>
     
     </script>
@@ -96,18 +142,18 @@
     
       <form id="add-product-form" class="form-inline">
         <fieldset class="control-group">
-            <input data-id="name" type="text" class="input-xlarge" placeholder="Product name">
+            <input type="text" class="input-xlarge" data-id="name" placeholder="Product name">
             <button type="submit" class="btn">Add product</button>
         </fieldset>
       </form>
       
-      <div data-id="form-alert" class="alert">
+      <div class="alert" data-id="form-alert">
       
       </div>
       
       <h3>Products</h3>
       
-      <div data-id="alert" class="alert">
+      <div class="alert" data-id="alert">
       
       </div>
       

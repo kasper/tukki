@@ -13,6 +13,7 @@
 
     <http use-expressions="true" entry-point-ref="authenticationEntryPoint">
         <intercept-url pattern="/api/login" access="permitAll" />
+        <intercept-url pattern="/api/user" access="permitAll" />
         <intercept-url pattern="/api/**" access="hasRole('user')" />
         <intercept-url pattern="/**" access="permitAll" />
         
@@ -27,7 +28,7 @@
         <!-- Default users -->
         <authentication-provider>
             <user-service>
-                <user name="kasper" password="repsak" authorities="user" />
+                <user name="kasper" password="repsakkasper" authorities="user" />
             </user-service>
         </authentication-provider>
     </authentication-manager>
