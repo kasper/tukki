@@ -59,6 +59,18 @@ public class ProductServiceTest {
     }
     
     @Test
+    public void deletingProductDecreasesCount() {
+        
+        Product product = productService.save(new Product());
+        long startCount = productService.count();
+        
+        productService.delete(product.getId());
+        long endCount = productService.count();
+        
+        assertEquals(startCount - 1, endCount);
+    }
+    
+    @Test
     public void deletedProductNotFoundByIdFromDatabase() {
         
         Product product = new Product();

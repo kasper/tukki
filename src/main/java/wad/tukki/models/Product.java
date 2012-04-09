@@ -53,6 +53,7 @@ public class Product {
         
         int hash = 7;
         hash = 23 * hash + (this.id != null ? this.id.hashCode() : 0);
+        
         return hash;
     }
 }
