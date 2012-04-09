@@ -17,8 +17,11 @@
         <intercept-url pattern="/**" access="permitAll" />
     </http>
     
-    <!-- Dummy authentication provider -->
     <authentication-manager alias="authenticationManager">
+        <!-- Users from database -->
+        <authentication-provider user-service-ref="userDetailsServiceImplementation" />
+        
+        <!-- Default users -->
         <authentication-provider>
             <user-service>
                 <user name="kasper" password="repsak" authorities="user" />

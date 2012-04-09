@@ -47,7 +47,7 @@ public abstract class JSONBaseController {
     public JSONMessage handleException(Exception exception) {
         
         System.out.println("handleException");
-        System.out.println(exception);
+        exception.printStackTrace();
         return new JSONMessage(JSONMessageCode.INTERNAL_ERROR, exception.getMessage());
     }
 }
