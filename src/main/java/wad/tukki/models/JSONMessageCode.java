@@ -16,7 +16,7 @@ public enum JSONMessageCode implements JsonSerializableWithType {
     // Errors
     GENERAL_ERROR (3),
     INTERNAL_ERROR (4),
-    PARSING_ERROR (5),
+    INVALID_JSON (5),
     VALIDATION_ERROR (6),
     
     // Authentication

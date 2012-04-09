@@ -1,5 +1,6 @@
 package wad.tukki.controllers;
 
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,7 @@ public class AuthenticationController extends JSONBaseController {
     
     @RequestMapping(method = RequestMethod.POST, value = "login", consumes = "application/json")
     @ResponseBody
-    public JSONMessage login(@RequestBody User user) {
+    public JSONMessage login(@Valid @RequestBody User user) {
         
         authenticationService.authenticate(user);
         

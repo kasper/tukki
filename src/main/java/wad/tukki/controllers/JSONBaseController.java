@@ -35,7 +35,7 @@ public abstract class JSONBaseController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public JSONMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        return new JSONMessage(JSONMessageCode.PARSING_ERROR, "Could not read JSON.");
+        return new JSONMessage(JSONMessageCode.INVALID_JSON, "Invalid JSON format.");
     }
     
     @ExceptionHandler(Exception.class)
@@ -45,6 +45,6 @@ public abstract class JSONBaseController {
         
         System.out.println("handleException");
         exception.printStackTrace();
-        return new JSONMessage(JSONMessageCode.INTERNAL_ERROR, exception.getMessage());
+        return new JSONMessage(JSONMessageCode.INTERNAL_ERROR, "Internal error.");
     }
 }

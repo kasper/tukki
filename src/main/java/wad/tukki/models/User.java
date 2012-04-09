@@ -1,13 +1,17 @@
 package wad.tukki.models;
 
 import java.util.List;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class User extends MongoObject {
     
+    @NotBlank(message = "Username may not be blank.")
     private String username;
+    
+    @NotBlank(message = "Password may not be blank.")
     private String password;
     
     @DBRef
