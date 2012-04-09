@@ -23,7 +23,7 @@ public class AuthenticationController extends JSONBaseController {
     
     @RequestMapping(method = RequestMethod.POST, value = "login", consumes = "application/json")
     @ResponseBody
-    public JSONMessage login(@Valid @RequestBody User user) {
+    public JSONMessage login(@RequestBody User user) {
         
         authenticationService.authenticate(user);
         

@@ -105,9 +105,9 @@ tukki.views.Login = Backbone.View.extend({
               .addClass('error');
           
           self.$('[data-id="login-alert"]')
-              .fadeIn()
               .addClass('alert-error')
-              .html(data.message);
+              .html('<b>Oh snap!</b> ' + data.message)
+              .fadeIn();
           
           return;
         }
@@ -121,14 +121,19 @@ tukki.views.Login = Backbone.View.extend({
       },
       
       // Request failed
-      error: function() {
-      
+      error: function(error) {
         alert('Error while logging in.');
       }
     });
   },
   
-  keydown: function() {
+  keydown: function(event) {
+  
+    // Enter pressed
+    if (event.which == 13) {
+      this.login();
+      return;
+    }
   
     // On keydown remove possible error state of inputs
     self.$('.control-group').removeClass('error');
@@ -155,7 +160,8 @@ tukki.views.ProductList = Backbone.View.extend({
     var productListTemplate = $('#product-list-template').html();
     $(this.el).html(productListTemplate);
     
-    // Hide alert
+    // Hide alerts
+    this.$('[data-id="form-alert"]').hide();
     this.$('[data-id="alert"]').hide();
     
     this.renderProducts();
@@ -168,9 +174,9 @@ tukki.views.ProductList = Backbone.View.extend({
       // No products
       if (this.collection.length == 0) {
       
-        $(alert).fadeIn()
-                .addClass('alert-info')
-                .html('No products.');
+        $(alert).addClass('alert-info')
+                .html('No products.')
+                .fadeIn();
       } else {
         $(alert).fadeOut();
       }
@@ -207,6 +213,9 @@ tukki.views.ProductList = Backbone.View.extend({
         
         // Empty input for product name
         self.$('[data-id="name"]').val('');
+        
+        // Fade out possible error alert
+        self.$('[data-id="form-alert"]').fadeOut();
       },
       
       error: function(model, response) {
@@ -220,6 +229,9 @@ tukki.views.ProductList = Backbone.View.extend({
             // Validation error for name
             if (errors.name.code == 6) {
               self.$('.control-group').addClass('error');
+              self.$('[data-id="form-alert"]').addClass('alert-error')
+                                              .html('<b>Oh snap!</b> ' + errors.name.message)
+                                              .fadeIn();
             }
           }
           

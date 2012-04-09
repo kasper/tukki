@@ -30,22 +30,29 @@
         
           <a class="brand" href="#">Tukki</a>
           
-          <ul class="nav nav-pills pull-right">
+          <ul class="nav">
+            <li><a href="#">Products</a></li>
+          </ul>
+          
+          <!-- Dropdown -->
+          <ul class="nav pull-right">
+          
+            <li class="divider-vertical"></li>
             <li class="dropdown" id="menu">
               
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#menu">
-              <span data-id="username">{{username}}</span>
-              <b class="caret"></b>
-            </a>
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#menu">
+                <span data-id="username">{{username}}</span>
+                <b class="caret"></b>
+              </a>
               
-            <ul class="dropdown-menu">
-              <li><a href="#">Action</a></li>
-              <li class="divider"></li>
-              <li><a href="#/logout">Logout</a></li>
-            </ul>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li class="divider"></li>
+                <li><a href="#/logout">Logout</a></li>
+              </ul>
               
-          </li>
-        </ul>
+            </li>
+          </ul>
 
         </div>
       </div>
@@ -89,10 +96,14 @@
     
       <form id="add-product-form" class="form-inline">
         <fieldset class="control-group">
-          <input data-id="name" type="text" class="input-xlarge" placeholder="Product name">
-          <button type="submit" class="btn">Add product</button>
+            <input data-id="name" type="text" class="input-xlarge" placeholder="Product name">
+            <button type="submit" class="btn">Add product</button>
         </fieldset>
       </form>
+      
+      <div data-id="form-alert" class="alert">
+      
+      </div>
       
       <h3>Products</h3>
       
