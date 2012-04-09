@@ -1,33 +1,27 @@
 package wad.tukki.models;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonSerializableWithType;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.TypeSerializer;
 
-public enum JSONMessageCode implements JsonSerializableWithType {
+public class JSONMessageMap implements JsonSerializableWithType {
+
+    private String name;
+    private Map<String, JSONMessage> messages;
     
-    // Status
-    OK (1),
-    NOT_FOUND (2),
+    public JSONMessageMap(String name) {
+        
+        this.name = name;
+        messages = new HashMap<String, JSONMessage>();
+    }
     
-    // Errors
-    GENERAL_ERROR (3),
-    INTERNAL_ERROR (4),
-    PARSING_ERROR (5),
-    VALIDATION_ERROR (6),
-    
-    // Authentication
-    AUTHENTICATION_REQUIRED (7),
-    BAD_CREDENTIALS (8),
-    AUTHENTICATED (9);
-    
-    private int code;
-    
-    JSONMessageCode(int code) {
-        this.code = code;
+    public void put(String key, JSONMessage value) {
+        messages.put(key, value);
     }
 
     @Override
@@ -39,6 +33,9 @@ public enum JSONMessageCode implements JsonSerializableWithType {
     @Override
     public void serialize(JsonGenerator generator, SerializerProvider provider) 
                           throws IOException, JsonProcessingException {
-        generator.writeNumber(code);
+        
+        generator.writeStartObject();
+        generator.writeObjectField(name, messages);
+        generator.writeEndObject();
     }
 }

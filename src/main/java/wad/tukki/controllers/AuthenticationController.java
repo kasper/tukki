@@ -45,7 +45,7 @@ public class AuthenticationController extends JSONBaseController {
         
         SecurityContextHolder.clearContext();
         
-        return new JSONMessage(JSONMessageCode.GENERAL_MESSAGE, "Logged out.");
+        return new JSONMessage(JSONMessageCode.OK, "Logged out.");
     }
     
     @ExceptionHandler(BadCredentialsException.class)

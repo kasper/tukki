@@ -1,7 +1,5 @@
 package wad.tukki.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -9,26 +7,25 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import wad.tukki.models.JSONAttributeMessage;
 import wad.tukki.models.JSONMessage;
 import wad.tukki.models.JSONMessageCode;
+import wad.tukki.models.JSONMessageMap;
 
 public abstract class JSONBaseController {
         
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public List<JSONAttributeMessage> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    public JSONMessageMap handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         
-        ArrayList<JSONAttributeMessage> errors = new ArrayList<JSONAttributeMessage>();
+        JSONMessageMap errors = new JSONMessageMap("errors");
         
         // Validation errors
         for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
             
-            JSONAttributeMessage error = new JSONAttributeMessage(JSONMessageCode.VALIDATION_ERROR,
-                                                                  fieldError.getField(),
-                                                                  fieldError.getDefaultMessage());
-            errors.add(error);
+            JSONMessage error = new JSONMessage(JSONMessageCode.VALIDATION_ERROR,
+                                                fieldError.getDefaultMessage());
+            errors.put(fieldError.getField(), error);
         }
         
         return errors;

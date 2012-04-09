@@ -99,7 +99,7 @@ tukki.views.Login = Backbone.View.extend({
         success: function(data) {
 
           // Bad credentials
-          if (data.code == 401) {
+          if (data.code == 8) {
           
             self.$('.control-group')
                 .addClass('error');
@@ -113,7 +113,7 @@ tukki.views.Login = Backbone.View.extend({
           }
           
           // Authenticated
-          if (data.code == 402) {
+          if (data.code == 9) {
             
             $(self.el).modal('hide');
             tukki.app.navigate('/', {trigger: true});
@@ -173,14 +173,16 @@ tukki.views.ProductList = Backbone.View.extend({
         error: function(model, response) {
         
           if (response.status == 400) {
-            var validationErrors = JSON.parse(response.responseText);
             
-            $.each(validationErrors, function() {
+            var errors = JSON.parse(response.responseText).errors;
             
-              if (this.code == 203) {
+            if (errors.name) {
+            
+              // Validation error for name
+              if (errors.name.code == 6) {
                 self.$('.control-group').addClass('error');
               }
-            });
+            }
             
             return;
           }
