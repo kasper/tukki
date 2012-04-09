@@ -15,6 +15,9 @@
         <intercept-url pattern="/api/login" access="permitAll" />
         <intercept-url pattern="/api/**" access="hasRole('user')" />
         <intercept-url pattern="/**" access="permitAll" />
+        
+        <!-- Remember me for 2 weeks -->
+        <remember-me user-service-ref="userDetailsServiceImplementation" key="Slooh20jA4" token-validity-seconds="1209600" />
     </http>
     
     <authentication-manager alias="authenticationManager">
