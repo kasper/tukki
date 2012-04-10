@@ -10,6 +10,7 @@ import wad.tukki.models.JSONMessage;
 import wad.tukki.models.JSONMessageCode;
 import wad.tukki.models.JSONMessageMap;
 import wad.tukki.models.User;
+import wad.tukki.services.AuthenticationService;
 import wad.tukki.services.UserService;
 
 @Controller
@@ -18,6 +19,20 @@ public class UserController extends JSONBaseController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private AuthenticationService authenticationService;
+    
+    @RequestMapping(method = RequestMethod.GET, value = "user")
+    @ResponseBody
+    public User getUser() {
+        
+        String username = authenticationService.getUsername();
+        User user = userService.findByUsername(username);
+        user.setPassword(null);
+        
+        return user;
+    }
     
     @RequestMapping(method = RequestMethod.POST, value = "user", consumes = "application/json")
     @ResponseBody

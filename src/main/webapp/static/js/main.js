@@ -46,6 +46,20 @@ tukki.collections.Products = Backbone.Collection.extend({
 
 /* Views */
 
+tukki.views.Navigation = Backbone.View.extend({
+
+  initialize: function() {
+    this.render();
+  },
+  
+  render: function() {
+  
+    $('#navigation').find('.nav').show();
+    this.$('[data-id="username"]').html(this.model.username);
+  }
+
+});
+
 tukki.views.Login = Backbone.View.extend({
 
   events: {
@@ -425,6 +439,8 @@ tukki.controllers.Authentication = {
 
   authenticate: function(authentication) {
   
+    var self = this;
+  
     $.ajax({
       
       type: 'POST',
@@ -454,9 +470,20 @@ tukki.controllers.Authentication = {
   
   invalidate: function(callback) {
   
-      // Logout request
-      $.get('/api/logout', function() {
-        callback();
+    var self = this;
+  
+    // Logout request
+    $.get('/api/logout', function() {
+      callback();
+    });
+  },
+  
+  user: function(callback) {
+    
+    var self = this;
+  
+    $.get('/api/user', function(data) {
+      callback(data);
     });
   }
   
@@ -486,7 +513,6 @@ tukki.routers.Main = Backbone.Router.extend({
     
     // Logout    
     tukki.controllers.Authentication.invalidate(function() {
-      $('#content').empty();
       self.navigate('/', {trigger: true});
     });
   },
@@ -498,12 +524,22 @@ tukki.routers.Main = Backbone.Router.extend({
   
   // Render login
   renderLogin: function() {
+  
+    this.clearViews();
     new tukki.views.Login({el: $('#modal')});
   },
   
   // Render register
   renderRegister: function() {
+  
+    this.clearViews();
     new tukki.views.Register({el: $('#modal')});
+  },
+  
+  clearViews: function() {
+    
+    $('#content').empty();
+    $('#navigation').find('.nav').hide();
   }
   
 });
@@ -512,8 +548,8 @@ tukki.routers.Product = Backbone.Router.extend({
 
   routes: {
   
-    '':             'products',
-    '/':            'products',
+    '':             'index',
+    '/':            'index',
     '/products':    'products',
     '/product/:id': 'product'
      
@@ -583,12 +619,17 @@ tukki.routers.Product = Backbone.Router.extend({
     return product;
   },
   
+  index: function() {
+    this.products();
+  },
+  
   // Show products
   products: function() {
-  
+    
     var self = this;
     
     this.fetchProducts(function(products) {
+      self.renderNavigation();
       self.renderProductList(products);
     });
   },
@@ -603,6 +644,15 @@ tukki.routers.Product = Backbone.Router.extend({
     });
   },
   
+  // Render navigation
+  renderNavigation: function() {
+    
+    tukki.controllers.Authentication.user(function(user) {
+       new tukki.views.Navigation({el: $('#navigation'), model: user});
+    });
+    
+  },
+        
   // Render products
   renderProductList: function(products) {
   
