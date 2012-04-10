@@ -65,7 +65,6 @@ tukki.views.Login = Backbone.View.extend({
   events: {
   
     'click [data-id="login"]':      'login',
-    'click [data-id="register"]':   'undelegate',
     'keydown [data-id="username"]': 'keydown',
     'keydown [data-id="password"]': 'keydown'
     
@@ -76,6 +75,8 @@ tukki.views.Login = Backbone.View.extend({
   },
   
   render: function() {
+    
+    $(this.el).undelegate();
     
     // Display login
     var loginTemplate = $('#login-template').html();
@@ -146,10 +147,6 @@ tukki.views.Login = Backbone.View.extend({
     });
   },
   
-  undelegate: function() {
-    this.undelegateEvents();
-  },
-  
   keydown: function(event) {
   
     // Enter pressed
@@ -168,7 +165,7 @@ tukki.views.Register = Backbone.View.extend({
 
   events: {
   
-    'click [data-id="register"]':  'register',
+    'click [data-id="register"]':   'register',
     'keydown [data-id="username"]': 'keydown',
     'keydown [data-id="password"]': 'keydown'
   
@@ -179,6 +176,8 @@ tukki.views.Register = Backbone.View.extend({
   },
   
   render: function() {
+  
+    $(this.el).undelegate();
   
     // Display register
     var registerTemplate = $('#register-template').html();
