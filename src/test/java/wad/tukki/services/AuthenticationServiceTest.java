@@ -1,12 +1,10 @@
 package wad.tukki.services;
 
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
