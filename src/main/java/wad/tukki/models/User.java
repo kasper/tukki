@@ -3,6 +3,7 @@ package wad.tukki.models;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,13 +17,25 @@ public class User extends MongoObject {
     @Size(min = 10, message = "Password must be at least 10 characters long.")
     private String password;
     
+    @NotBlank(message = "Email may not be blank.")
+    @Email(message = "Email is not well-formed.")
+    private String email;
+    
     @DBRef
     private List<UserRole> roles;
-
+    
     public User() {
         roles = new ArrayList<UserRole>();
     }
-    
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -31,20 +44,20 @@ public class User extends MongoObject {
         this.password = password;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public List<UserRole> getRoles() {
         return roles;
     }
 
     public void setRoles(List<UserRole> roles) {
         this.roles = roles;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
     
     public void addRole(UserRole role) {
