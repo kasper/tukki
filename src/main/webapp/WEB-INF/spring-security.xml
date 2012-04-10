@@ -13,7 +13,7 @@
 
     <http use-expressions="true" entry-point-ref="authenticationEntryPoint">
         <intercept-url pattern="/api/login" access="permitAll" />
-        <intercept-url pattern="/api/user" access="permitAll" />
+        <intercept-url pattern="/api/user" access="permitAll" method="POST" />
         <intercept-url pattern="/api/**" access="hasRole('user')" />
         <intercept-url pattern="/**" access="permitAll" />
         
