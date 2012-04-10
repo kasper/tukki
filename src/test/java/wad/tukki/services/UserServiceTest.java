@@ -20,10 +20,10 @@ import wad.tukki.models.User;
 public class UserServiceTest {
 
     @Autowired
-    private UserService userService;
+    private MongoTemplate mongoTemplate;
     
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private UserService userService;
     
     @AfterClass
     public static void afterClass() throws UnknownHostException {
