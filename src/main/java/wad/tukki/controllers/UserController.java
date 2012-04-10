@@ -2,11 +2,13 @@ package wad.tukki.controllers;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import wad.tukki.exceptions.UsernameExistsException;
+import wad.tukki.models.JSONMessage;
+import wad.tukki.models.JSONMessageCode;
+import wad.tukki.models.JSONMessageMap;
 import wad.tukki.models.User;
 import wad.tukki.services.UserService;
 
@@ -19,11 +21,24 @@ public class UserController extends JSONBaseController {
     
     @RequestMapping(method = RequestMethod.POST, value = "user", consumes = "application/json")
     @ResponseBody
-    public User postUser(@Valid @RequestBody User user) {
+    public User postUser(@Valid @RequestBody User user) throws UsernameExistsException {
         
-        user = userService.save(user);
+        user = userService.create(user);
         user = userService.addUserRole(user.getId(), "user");
         
         return user;
+    }
+    
+    @ExceptionHandler(UsernameExistsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public JSONMessageMap handleUsernameExistsException(UsernameExistsException exception) {
+        
+        JSONMessageMap errors = new JSONMessageMap("errors");
+        JSONMessage error = new JSONMessage(JSONMessageCode.VALIDATION_ERROR, "Username is already taken.");
+        
+        errors.put("username", error);
+        
+        return errors;
     }
 }

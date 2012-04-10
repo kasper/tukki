@@ -3,6 +3,7 @@ package wad.tukki.services;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import wad.tukki.exceptions.UsernameExistsException;
 import wad.tukki.models.User;
 import wad.tukki.models.UserRole;
 import wad.tukki.repositories.UserRepository;
@@ -16,7 +17,7 @@ public class UserServiceImplementation implements UserService {
     
     @Autowired
     private UserRoleRepository userRoleRepository;
-
+    
     @Override
     public User save(User user) {
         
@@ -35,6 +36,16 @@ public class UserServiceImplementation implements UserService {
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+    
+    @Override
+    public User create(User user) throws UsernameExistsException {
+        
+        if (findByUsername(user.getUsername()) != null) {
+            throw new UsernameExistsException("Username already exists.");
+        }
+        
+        return save(user);
     }
 
     @Override

@@ -3,6 +3,7 @@ var tukki = {
   models: {},
   collections: {},
   views: {},
+  controllers: {},
   routers: {},
   
   initialize: function() {
@@ -50,6 +51,7 @@ tukki.views.Login = Backbone.View.extend({
   events: {
   
     'click [data-id="login"]':      'login',
+    'click [data-id="register"]':   'undelegate',
     'keydown [data-id="username"]': 'keydown',
     'keydown [data-id="password"]': 'keydown'
     
@@ -92,18 +94,22 @@ tukki.views.Login = Backbone.View.extend({
                        
     var self = this;               
     
-    // Send login request
-    $.ajax({
+    // Authenticate
+    tukki.controllers.Authentication.authenticate({username: username, password: password,
       
-      type: 'POST',
-      url: '/api/login',
-      data: JSON.stringify({username: username, password: password}),
-      dataType: 'json',
-      contentType: 'application/json; charset=utf-8',
+      // Authentication succeeded
+      authenticated: function(data) {
+        
+        // Authenticated
+        if (data.code == 9) {
+          
+          $(self.el).modal('hide');
+          tukki.app.navigate('/', {trigger: true});
+        }
+      },
       
-      // Request succeeded
-      success: function(data) {
-
+      authenticationFailed: function(data) {
+        
         // Bad credentials
         if (data.code == 8) {
         
@@ -117,13 +123,6 @@ tukki.views.Login = Backbone.View.extend({
           
           return;
         }
-        
-        // Authenticated
-        if (data.code == 9) {
-          
-          $(self.el).modal('hide');
-          tukki.app.navigate('/', {trigger: true});
-        }
       },
       
       // Request failed
@@ -131,6 +130,10 @@ tukki.views.Login = Backbone.View.extend({
         alert('Error while logging in.');
       }
     });
+  },
+  
+  undelegate: function() {
+    this.undelegateEvents();
   },
   
   keydown: function(event) {
@@ -141,7 +144,7 @@ tukki.views.Login = Backbone.View.extend({
       return;
     }
   
-    // On keydown remove possible error state of inputs
+    // Remove possible error state of inputs
     self.$('.control-group').removeClass('error');
   }
 
@@ -151,7 +154,9 @@ tukki.views.Register = Backbone.View.extend({
 
   events: {
   
-    'click [data-id="register"]': 'register'
+    'click [data-id="register"]':  'register',
+    'keydown [data-id="username"]': 'keydown',
+    'keydown [data-id="password"]': 'keydown'
   
   },
 
@@ -197,24 +202,43 @@ tukki.views.Register = Backbone.View.extend({
     user.save({username: username, password: password}, {
     
       success: function() {
-        console.log('User registered!');
+        
+        tukki.controllers.Authentication.authenticate({username: username, password: password,
+        
+          authenticated: function(data) {
+            
+            // Authenticated
+            if (data.code == 9) {
+              $(self.el).modal('hide');
+              tukki.app.navigate('/', {trigger: true});
+            }
+            
+          },
+          
+          authenticationFailed: function(data) {
+            alert('Authentication failed');
+          },
+          
+          error: function(error) {
+            alert('Error while authentication.');
+          }
+        
+        });
       },
       
       error: function(model, response) {
       
         if (response.status == 400) {
           
-          self.$('[data-id="alert"]').html('<b>Oh snap!</b> ');
           var errors = JSON.parse(response.responseText).errors;
+          var errorMessages = ['<b>Oh snap!</b>'];
           
           if (errors.username) {
           
             // Validation error for username
             if (errors.username.code == 6) {
-              self.$('.control-group').addClass('error');
-              self.$('[data-id="alert"]').addClass('alert-error')
-                                              .append(errors.username.message + ' ')
-                                              .fadeIn();
+              self.$('[data-id="username-control-group"]').addClass('error');
+              errorMessages.push(errors.username.message);
             }
           }
           
@@ -222,12 +246,14 @@ tukki.views.Register = Backbone.View.extend({
             
             // Validation error for password
             if (errors.password.code == 6) {
-                self.$('.control-group').addClass('error');
-                self.$('[data-id="alert"]').addClass('alert-error')
-                                              .append(errors.password.message)
-                                              .fadeIn();
+              self.$('[data-id="password-control-group"]').addClass('error');
+              errorMessages.push(errors.password.message);
             }
           }
+          
+          self.$('[data-id="alert"]').addClass('alert-error')
+                                     .html(errorMessages.join(' '))
+                                     .fadeIn();
           
           return;
         }
@@ -235,6 +261,18 @@ tukki.views.Register = Backbone.View.extend({
         alert('Error while creating new user: ' + response.status + ' ' + response.statusText);
       }
     });
+  },
+  
+  keydown: function(event) {
+  
+    // Enter pressed
+    if (event.which == 13) {
+      this.register();
+      return;
+    }
+    
+    // Remove possible error state of targeted input
+    self.$('[data-id="' + event.currentTarget.attributes['data-id'].value + '-control-group"]').removeClass('error');
   }
 
 });
@@ -343,7 +381,7 @@ tukki.views.ProductList = Backbone.View.extend({
   
   keydown: function() {
     
-    // On keydown remove possible error state of inputs
+    // Remove possible error state of inputs
     self.$('.control-group').removeClass('error'); 
   }
   
@@ -381,6 +419,49 @@ tukki.views.Product = Backbone.View.extend({
 
 });
 
+/* Controllers */
+
+tukki.controllers.Authentication = {
+
+  authenticate: function(authentication) {
+  
+    $.ajax({
+      
+      type: 'POST',
+      url: '/api/login',
+      data: JSON.stringify({username: authentication.username, password: authentication.password}),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
+      
+      // Request succeeded
+      success: function(data) {
+        
+        // Bad credentials
+        if (data.code == 8) {
+          authentication.authenticationFailed(data);
+          return;
+        }
+      
+        authentication.authenticated(data);
+      },
+      
+      // Request failed
+      error: function(error) {
+        authentication.error(error);
+      }
+    });
+  },
+  
+  invalidate: function(callback) {
+  
+      // Logout request
+      $.get('/api/logout', function() {
+        callback();
+    });
+  }
+  
+}
+
 /* Routers */
 
 tukki.routers.Main = Backbone.Router.extend({
@@ -403,9 +484,8 @@ tukki.routers.Main = Backbone.Router.extend({
   
     var self = this;
     
-    // Send logout request
-    $.get('/api/logout', function() {
-      
+    // Logout    
+    tukki.controllers.Authentication.invalidate(function() {
       $('#content').empty();
       self.navigate('/', {trigger: true});
     });
