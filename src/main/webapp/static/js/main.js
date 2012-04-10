@@ -167,7 +167,8 @@ tukki.views.Register = Backbone.View.extend({
   
     'click [data-id="register"]':   'register',
     'keydown [data-id="username"]': 'keydown',
-    'keydown [data-id="password"]': 'keydown'
+    'keydown [data-id="password"]': 'keydown',
+    'keydown [data-id="email"]':    'keydown'
   
   },
 
@@ -206,13 +207,17 @@ tukki.views.Register = Backbone.View.extend({
     var password = this.$('[data-id="password"]')
                        .val()
                        .trim();
+                       
+    var email = this.$('[data-id="email"]')
+                    .val()
+                    .trim();
      
     var user = new tukki.models.User();
                        
     var self = this;
     
     // Save user
-    user.save({username: username, password: password}, {
+    user.save({username: username, password: password, email: email}, {
     
       success: function() {
         
@@ -261,6 +266,15 @@ tukki.views.Register = Backbone.View.extend({
             if (errors.password.code == 6) {
               self.$('[data-id="password-control-group"]').addClass('error');
               errorMessages.push(errors.password.message);
+            }
+          }
+          
+          if (errors.email) {
+          
+            // Validation error for email
+            if (errors.email.code == 6) {
+              self.$('[data-id="email-control-group"]').addClass('error');
+              errorMessages.push(errors.email.message);
             }
           }
           
