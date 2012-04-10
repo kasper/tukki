@@ -24,12 +24,5 @@
     <authentication-manager alias="authenticationManager">
         <!-- Users from database -->
         <authentication-provider user-service-ref="userDetailsServiceImplementation" />
-        
-        <!-- Default users -->
-        <authentication-provider>
-            <user-service>
-                <user name="kasper" password="repsakkasper" authorities="user" />
-            </user-service>
-        </authentication-provider>
     </authentication-manager>
 </beans:beans>
