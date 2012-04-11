@@ -26,12 +26,7 @@ public class UserController extends JSONBaseController {
     @RequestMapping(method = RequestMethod.GET, value = "user")
     @ResponseBody
     public User getUser() {
-        
-        String username = authenticationService.getUsername();
-        User user = userService.findByUsername(username);
-        user.setPassword(null);
-        
-        return user;
+        return userService.findByUsername(authenticationService.getUsername());
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "user", consumes = "application/json")
