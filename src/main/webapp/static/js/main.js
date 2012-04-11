@@ -443,9 +443,12 @@ tukki.views.Product = Backbone.View.extend({
   
   render: function() {
     
+    var model = this.model.toJSON();
+    model.formattedCreatedOn = new Date(model.createdOn).format('mmmm dS, yyyy');
+    
     // Display product
     var productTemplate = $('#product-template').html();
-    var output = Mustache.render(productTemplate, this.model.toJSON());
+    var output = Mustache.render(productTemplate, model);
     $(this.el).html(output);
   }
 
@@ -660,7 +663,11 @@ tukki.routers.Product = Backbone.Router.extend({
   
     var self = this;
     
+    $('#navigation li').removeClass('active');
+    $('#products-nav-item').addClass('active');
+    
     this.fetchProduct(id, function(product) {
+      self.renderNavigation();
       self.renderProduct(product);
     });
   },
