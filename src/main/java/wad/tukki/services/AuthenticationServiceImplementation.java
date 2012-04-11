@@ -43,6 +43,11 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
         
         return authentication.isAuthenticated();
     }
+    
+    @Override
+    public Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
 
     @Override
     public String getUsername() {

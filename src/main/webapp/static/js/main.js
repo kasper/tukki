@@ -107,10 +107,13 @@ tukki.views.Login = Backbone.View.extend({
                        .val()
                        .trim();
                        
-    var self = this;               
+    var remember = this.$('[data-id="remember"]')
+                       .prop('checked'); 
+       
+    var self = this;            
     
     // Authenticate
-    tukki.controllers.Authentication.authenticate({username: username, password: password,
+    tukki.controllers.Authentication.authenticate({username: username, password: password, remember: remember,
       
       // Authentication succeeded
       authenticated: function(data) {
@@ -128,8 +131,9 @@ tukki.views.Login = Backbone.View.extend({
         // Bad credentials
         if (data.code == 8) {
         
-          self.$('.control-group')
-              .addClass('error');
+          self.$('[data-id="username-control-group"]').addClass('error');
+              
+          self.$('[data-id="password-control-group"]').addClass('error');    
           
           self.$('[data-id="alert"]')
               .addClass('alert-error')
@@ -156,7 +160,8 @@ tukki.views.Login = Backbone.View.extend({
     }
   
     // Remove possible error state of inputs
-    self.$('.control-group').removeClass('error');
+    self.$('[data-id="username-control-group"]').removeClass('error');
+    self.$('[data-id="password-control-group"]').removeClass('error');
   }
 
 });
@@ -221,7 +226,7 @@ tukki.views.Register = Backbone.View.extend({
     
       success: function() {
         
-        tukki.controllers.Authentication.authenticate({username: username, password: password,
+        tukki.controllers.Authentication.authenticate({username: username, password: password, remember: false,
         
           authenticated: function(data) {
             
@@ -457,7 +462,7 @@ tukki.controllers.Authentication = {
     $.ajax({
       
       type: 'POST',
-      url: '/api/login',
+      url: '/api/login?remember=' + authentication.remember,
       data: JSON.stringify({username: authentication.username, password: authentication.password}),
       dataType: 'json',
       contentType: 'application/json; charset=utf-8',
