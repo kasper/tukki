@@ -1,6 +1,7 @@
 package wad.tukki.models;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -9,12 +10,23 @@ public class Product extends MongoObject {
     @NotBlank(message = "Name may not be empty.")
     private String name;
     
+    @DBRef
+    private User productOwner;
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public User getProductOwner() {
+        return productOwner;
+    }
+
+    public void setProductOwner(User productOwner) {
+        this.productOwner = productOwner;
     }
 
     @Override
