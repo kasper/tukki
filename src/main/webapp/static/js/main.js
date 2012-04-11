@@ -437,6 +437,11 @@ tukki.views.ProductListItem = Backbone.View.extend({
 
 tukki.views.Product = Backbone.View.extend({
 
+  events: {
+  
+    'click [data-id="delete"]': 'delete'
+  },
+
   initialize: function() {
     this.render();
   },
@@ -444,12 +449,46 @@ tukki.views.Product = Backbone.View.extend({
   render: function() {
     
     var model = this.model.toJSON();
+    
     model.formattedCreatedOn = new Date(model.createdOn).format('mmmm dS, yyyy');
     
     // Display product
     var productTemplate = $('#product-template').html();
     var output = Mustache.render(productTemplate, model);
     $(this.el).html(output);
+    
+    var self = this;
+    
+    this.$('[data-id="delete"]').hide();
+    
+    tukki.controllers.Authentication.user(function(authenticationUser) {
+      
+      // Only the product owner can delete the product
+      if (authenticationUser.username == model.productOwner.username) {
+        self.$('[data-id="delete"]').show();
+      }
+    });
+  },
+  
+  delete: function(event) {
+    
+    event.preventDefault();
+    
+    this.model.destroy({
+    
+      success: function(data) {
+      
+        console.log('Product deleted');
+        tukki.app.navigate('/', {trigger: true});
+      },
+      
+      error: function(data) {
+      
+        console.log(data);
+        alert('Error while deleting product');
+      }
+    
+    });
   }
 
 });

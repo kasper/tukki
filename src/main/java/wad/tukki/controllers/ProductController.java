@@ -5,6 +5,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import wad.tukki.models.JSONMessage;
+import wad.tukki.models.JSONMessageCode;
 import wad.tukki.models.Product;
 import wad.tukki.models.User;
 import wad.tukki.services.AuthenticationService;
@@ -33,6 +35,7 @@ public class ProductController extends JSONBaseController {
     @RequestMapping(method = RequestMethod.GET, value = "product/{id}")
     @ResponseBody
     public Product getProduct(@PathVariable String id) {
+        
         return productService.findById(id);
     }
 
@@ -44,5 +47,21 @@ public class ProductController extends JSONBaseController {
         product.setProductOwner(productOwner);
         
         return productService.save(product);
+    }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "product/{id}")
+    @ResponseBody
+    public JSONMessage deleteProduct(@PathVariable String id) {
+        
+        User authenticatedUser = userService.findByUsername(authenticationService.getUsername());
+        Product product = productService.findById(id);
+        
+        if (!product.canBeDeletedBy(authenticatedUser)) {
+            return new JSONMessage(JSONMessageCode.GENERAL_ERROR, "Only the product owner can delete the product.");
+        }
+        
+        productService.delete(id);
+        
+        return new JSONMessage(JSONMessageCode.OK, "Product deleted.");
     }
 }

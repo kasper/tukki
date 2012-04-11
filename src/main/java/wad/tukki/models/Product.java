@@ -39,6 +39,15 @@ public class Product extends MongoObject {
     public void setProductOwner(User productOwner) {
         this.productOwner = productOwner;
     }
+    
+    public boolean canBeDeletedBy(User user) {
+        
+        if (user.equals(getProductOwner())) {
+            return true;
+        }
+        
+        return false;
+    }
 
     @Override
     public boolean equals(Object obj) {
