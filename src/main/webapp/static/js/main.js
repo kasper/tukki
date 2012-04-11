@@ -646,6 +646,9 @@ tukki.routers.Product = Backbone.Router.extend({
     
     var self = this;
     
+    $('#navigation li').removeClass('active');
+    $('#products-nav-item').addClass('active');
+    
     this.fetchProducts(function(products) {
       self.renderNavigation();
       self.renderProductList(products);
