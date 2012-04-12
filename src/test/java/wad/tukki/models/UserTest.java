@@ -14,7 +14,7 @@ public class UserTest {
         user.setRoles(new ArrayList<UserRole>());
         
         UserRole role = new UserRole("user");
-        role.setId("testUserRole");
+        role.setId("testUserRoleId");
         user.addRole(role);
         
         assertTrue(user.getRoles().contains(role));
@@ -27,10 +27,10 @@ public class UserTest {
         user.setRoles(new ArrayList<UserRole>());
         
         UserRole a = new UserRole("user");
-        a.setId("testUserRole");
+        a.setId("testUserRoleId");
         
         UserRole b = new UserRole("user");
-        b.setId("testUserRole");
+        b.setId("testUserRoleId");
         
         user.addRole(a);
         user.addRole(b);
@@ -42,10 +42,10 @@ public class UserTest {
     public void equalUsers() {
         
         User a = new User();
-        a.setId("testUser");
+        a.setId("testUserId");
         
         User b = new User();
-        b.setId("testUser");
+        b.setId("testUserId");
         
         assertTrue(a.equals(b));
     }

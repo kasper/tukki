@@ -9,10 +9,10 @@ public class UserRoleTest {
     public void equalUserRoles() {
         
         UserRole a = new UserRole("user");
-        a.setId("testUserRole");
+        a.setId("testUserRoleId");
         
         UserRole b = new UserRole("user");
-        b.setId("testUserRole");
+        b.setId("testUserRoleId");
         
         assertTrue(a.equals(b));
     }

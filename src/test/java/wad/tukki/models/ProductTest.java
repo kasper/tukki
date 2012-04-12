@@ -10,7 +10,7 @@ public class ProductTest {
     public void canBeDeletedByProductOwner() {
         
         User productOwner = new User();
-        productOwner.setId("testProductOwner");
+        productOwner.setId("testProductOwnerId");
         
         Product product = new Product();
         product.setProductOwner(productOwner);
@@ -22,7 +22,7 @@ public class ProductTest {
     public void cannotBeDeletedByOthers() {
         
         User user = new User();
-        user.setEmail("testUser");
+        user.setId("testUserId");
         
         Product product = new Product();
         
@@ -33,10 +33,10 @@ public class ProductTest {
     public void equalProducts() {
         
         Product a = new Product();
-        a.setId("testProduct");
+        a.setId("testProductId");
         
         Product b = new Product();
-        b.setId("testProduct");
+        b.setId("testProductId");
         
         assertTrue(a.equals(b));
     }

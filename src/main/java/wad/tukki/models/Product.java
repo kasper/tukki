@@ -1,6 +1,8 @@
 package wad.tukki.models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,12 +18,21 @@ public class Product extends MongoObject {
     @DBRef
     private User productOwner;
     
+    @DBRef
+    private List<UserStory> stories;
+    
     public Product() {
+        
         createdOn = new Date();
+        stories = new ArrayList<UserStory>();
     }
 
     public Date getCreatedOn() {
         return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
     }
 
     public String getName() {
@@ -39,6 +50,14 @@ public class Product extends MongoObject {
     public void setProductOwner(User productOwner) {
         this.productOwner = productOwner;
     }
+
+    public List<UserStory> getStories() {
+        return stories;
+    }
+
+    public void setStories(List<UserStory> stories) {
+        this.stories = stories;
+    }
     
     public boolean canBeDeletedBy(User user) {
         
@@ -47,6 +66,10 @@ public class Product extends MongoObject {
         }
         
         return false;
+    }
+    
+    public void addUserStory(UserStory story) {
+        stories.add(story);
     }
 
     @Override
