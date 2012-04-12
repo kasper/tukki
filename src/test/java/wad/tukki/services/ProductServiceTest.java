@@ -50,12 +50,17 @@ public class ProductServiceTest {
     }
     
     @Test
-    public void addedProductFoundByIdFromDatabase() {
+    public void addedProductFoundById() {
         
         Product product = new Product();
         product = productService.save(product);
         
         assertEquals(product, productService.findById(product.getId()));
+    }
+    
+    @Test
+    public void nonExistingProductNotFoundById() {
+        assertEquals(null, productService.findById("nontExistingProductId"));
     }
     
     @Test
@@ -71,7 +76,7 @@ public class ProductServiceTest {
     }
     
     @Test
-    public void deletedProductNotFoundByIdFromDatabase() {
+    public void deletedProductNotFoundById() {
         
         Product product = new Product();
         product = productService.save(product);
