@@ -1,24 +1,12 @@
 package wad.tukki.models;
 
 import java.util.ArrayList;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class UserTest {
 
-    @Test
-    public void equalUsers() {
-        
-        User a = new User();
-        a.setId("testUser");
-        
-        User b = new User();
-        b.setId("testUser");
-        
-        assertTrue(a.equals(b));
-    }
-    
     @Test
     public void addedUserRoleFound() {
         
@@ -48,5 +36,17 @@ public class UserTest {
         user.addRole(b);
         
         assertEquals(1, user.getRoles().size());
+    }
+    
+    @Test
+    public void equalUsers() {
+        
+        User a = new User();
+        a.setId("testUser");
+        
+        User b = new User();
+        b.setId("testUser");
+        
+        assertTrue(a.equals(b));
     }
 }
