@@ -46,6 +46,59 @@ tukki.collections.Products = Backbone.Collection.extend({
 
 /* Views */
 
+tukki.views.DeleteConfirmation = Backbone.View.extend({
+
+  events: {
+  
+    'click [data-id="cancel"]': 'cancel',
+    'click [data-id="delete"]': 'delete'
+  },
+
+  initialize: function() {
+    this.render();
+  },
+  
+  render: function() {
+  
+    $(this.el).undelegate();
+    
+    // Display delete confirmation
+    var deleteConfirmationTemplate = $('#delete-confirmation-template').html();
+    $(this.el).html(deleteConfirmationTemplate);
+    
+    // Show modal
+    $(this.el).modal();
+  },
+  
+  cancel: function(event) {
+    
+    event.preventDefault();
+    $(this.el).modal('hide');
+  },
+  
+  delete: function(event) {
+  
+    event.preventDefault();
+    
+    var self = this;
+    
+    this.model.destroy({
+    
+      success: function(data) {
+      
+        $(self.el).modal('hide');
+        tukki.app.navigate('/', {trigger: true});
+      },
+      
+      error: function(data) {    
+        alert('Error while deleting product');
+      }
+    
+    });
+  }
+
+});
+
 tukki.views.Navigation = Backbone.View.extend({
 
   initialize: function() {
@@ -473,22 +526,7 @@ tukki.views.Product = Backbone.View.extend({
   delete: function(event) {
     
     event.preventDefault();
-    
-    this.model.destroy({
-    
-      success: function(data) {
-      
-        console.log('Product deleted');
-        tukki.app.navigate('/', {trigger: true});
-      },
-      
-      error: function(data) {
-      
-        console.log(data);
-        alert('Error while deleting product');
-      }
-    
-    });
+    new tukki.views.DeleteConfirmation({el: $('#modal'), model: this.model});
   }
 
 });
