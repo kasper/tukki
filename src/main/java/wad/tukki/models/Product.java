@@ -71,32 +71,4 @@ public class Product extends MongoObject {
     public void addUserStory(UserStory story) {
         stories.add(story);
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        
-        if (obj == null) {
-            return false;
-        }
-        
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        
-        final Product other = (Product) obj;
-        if ((this.getId() == null) ? (other.getId() != null) : !this.getId().equals(other.getId())) {
-            return false;
-        }
-        
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        
-        int hash = 7;
-        hash = 23 * hash + (this.getId() != null ? this.getId().hashCode() : 0);
-        
-        return hash;
-    }
 }
