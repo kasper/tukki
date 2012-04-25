@@ -33,13 +33,6 @@ public class ProductServiceTest {
     }
     
     @Test
-    public void addingNullReturnsNull() {
-        
-        Product product = productService.save(null);
-        assertEquals(null, product);
-    }
-    
-    @Test
     public void addingProductIncreasesCount() {
         
         long startCount = productService.count();

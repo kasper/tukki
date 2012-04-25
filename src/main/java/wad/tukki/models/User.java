@@ -1,17 +1,20 @@
 package wad.tukki.models;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.Size;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class User extends MongoObject {
+    
+    private Date when;
     
     @NotBlank(message = "Username may not be blank.")
     private String username;
@@ -22,12 +25,22 @@ public class User extends MongoObject {
     @NotBlank(message = "Email may not be blank.")
     @Email(message = "Email is not well-formed.")
     private String email;
+
+    @JsonIgnore
+    private List<String> roleIds;
     
-    @DBRef
+    @Transient
     private List<UserRole> roles;
     
     public User() {
+        
+        when = new Date();
+        roleIds = new ArrayList<String>();
         roles = new ArrayList<UserRole>();
+    }
+
+    public Date getWhen() {
+        return when;
     }
 
     public String getEmail() {
@@ -48,6 +61,10 @@ public class User extends MongoObject {
         this.password = password;
     }
 
+    public List<String> getRoleIds() {
+        return roleIds;
+    }
+    
     public List<UserRole> getRoles() {
         return roles;
     }
@@ -70,6 +87,7 @@ public class User extends MongoObject {
             return;
         }
         
+        roleIds.add(role.getId());
         roles.add(role);
     }
 }

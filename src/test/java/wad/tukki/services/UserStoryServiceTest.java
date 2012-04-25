@@ -33,13 +33,6 @@ public class UserStoryServiceTest {
     }
     
     @Test
-    public void addingNullReturnsNull() {
-        
-        UserStory story = userStoryService.save(null);
-        assertEquals(null, story);
-    }
-    
-    @Test
     public void addingUserStoryIncreasesCount() {
         
         long startCount = userStoryService.count();

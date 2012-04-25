@@ -14,11 +14,6 @@ public class UserRoleServiceImplementation implements UserRoleService {
     
     @Override
     public UserRole save(UserRole userRole) {
-        
-        if (userRole == null) {
-            return null;
-        }
-        
         return userRoleRepository.save(userRole);
     }
 

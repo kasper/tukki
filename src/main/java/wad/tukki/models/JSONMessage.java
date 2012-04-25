@@ -13,16 +13,8 @@ public class JSONMessage {
     public JSONMessageCode getCode() {
         return code;
     }
-
-    public void setCode(JSONMessageCode code) {
-        this.code = code;
-    }
     
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

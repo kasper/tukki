@@ -10,26 +10,55 @@ import wad.tukki.repositories.ProductRepository;
 public class ProductServiceImplementation implements ProductService {
 
     @Autowired
+    private UserService userService;
+    
+    @Autowired
     private ProductRepository productRepository;
+    
+    private void resolveProductOwner(Product... products) {
+        
+        for (Product product : products) {
+            
+            if (product.getProductOwnerId() != null) {
+                product.setProductOwner(userService.findById(product.getProductOwnerId()));
+            }
+        }
+    }
     
     @Override
     public Product save(Product product) {
+        
+        product = productRepository.save(product);
+        resolveProductOwner(product);
+        
+        return product;
+    }
+    
+    @Override
+    public Product findById(String id) {
+        
+        Product product = productRepository.findOne(id);
         
         if (product == null) {
             return null;
         }
         
-        return productRepository.save(product);
-    }
-    
-    @Override
-    public Product findById(String id) {
-        return productRepository.findOne(id);
+        resolveProductOwner(product);
+        
+        return product;
     }
     
     @Override
     public List<Product> findAll() {
-        return productRepository.findAll();
+        
+        List<Product> products = productRepository.findAll();
+        
+        Product[] productsAsArray = new Product[products.size()];
+        products.toArray(productsAsArray);
+        
+        resolveProductOwner(productsAsArray);
+        
+        return products;
     }
     
     @Override

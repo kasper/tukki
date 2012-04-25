@@ -14,11 +14,6 @@ public class UserStoryServiceImplementation implements UserStoryService {
 
     @Override
     public UserStory save(UserStory userStory) {
-        
-        if (userStory == null) {
-            return null;
-        }
-        
         return userStoryRepository.save(userStory);
     }
 

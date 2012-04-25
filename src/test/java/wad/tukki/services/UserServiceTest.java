@@ -63,13 +63,6 @@ public class UserServiceTest {
             existingUser = userService.findByUsername("kasper");
         }
     }
-        
-    @Test
-    public void addingNullReturnsNull() {
-        
-        User user = userService.save(null);
-        assertEquals(null, user);
-    }
     
     @Test
     public void addingUserIncreasesCount() {

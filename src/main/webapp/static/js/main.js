@@ -503,7 +503,7 @@ tukki.views.Product = Backbone.View.extend({
     
     var model = this.model.toJSON();
     
-    model.formattedCreatedOn = new Date(model.createdOn).format('mmmm dS, yyyy');
+    model.formattedWhen = new Date(model.when).format('mmmm dS, yyyy');
     
     // Display product
     var productTemplate = $('#product-template').html();

@@ -1,5 +1,6 @@
 package wad.tukki.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -7,35 +8,65 @@ import wad.tukki.exceptions.UsernameExistsException;
 import wad.tukki.models.User;
 import wad.tukki.models.UserRole;
 import wad.tukki.repositories.UserRepository;
-import wad.tukki.repositories.UserRoleRepository;
 
 @Service
 public class UserServiceImplementation implements UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRoleService userRoleService;
     
     @Autowired
-    private UserRoleRepository userRoleRepository;
+    private UserRepository userRepository;
+    
+    private void resolveRoles(User... users) {
+        
+        for (User user : users) {
+            
+            List<UserRole> roles = new ArrayList<UserRole>();
+            
+            for (String roleId : user.getRoleIds()) {
+                roles.add(userRoleService.findById(roleId));
+            }
+            
+            user.setRoles(roles);
+        }
+    }
     
     @Override
     public User save(User user) {
+        
+        user = userRepository.save(user);
+        resolveRoles(user);
+        
+        return user;
+    }
+
+    @Override
+    public User findById(String id) {
+        
+        User user = userRepository.findOne(id);
         
         if (user == null) {
             return null;
         }
         
-        return userRepository.save(user);
-    }
-
-    @Override
-    public User findById(String id) {
-        return userRepository.findOne(id);
+        resolveRoles(user);
+        
+        return user;
     }
 
     @Override
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        
+        User user = userRepository.findByUsername(username);
+        
+        if (user == null) {
+            return null;
+        }
+        
+        resolveRoles(user);
+        
+        return user;
     }
     
     @Override
@@ -50,7 +81,15 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public List<User> findAll() {
-        return userRepository.findAll();
+        
+        List<User> users = userRepository.findAll();
+        
+        User[] usersAsArray = new User[users.size()];
+        users.toArray(usersAsArray);
+        
+        resolveRoles(usersAsArray);
+        
+        return users;
     }
 
     @Override
@@ -72,15 +111,15 @@ public class UserServiceImplementation implements UserService {
             return null;
         }
         
-        UserRole role = userRoleRepository.findByName(name);
+        UserRole role = userRoleService.findByName(name);
         
         if (role == null) {
             role = new UserRole(name);
-            role = userRoleRepository.save(role);
+            role = userRoleService.save(role);
         }
         
         user.addRole(role);
         
-        return userRepository.save(user);
+        return save(user);
     }
 }

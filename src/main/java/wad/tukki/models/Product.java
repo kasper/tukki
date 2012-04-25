@@ -3,36 +3,35 @@ package wad.tukki.models;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class Product extends MongoObject {
     
-    private Date createdOn;
+    private Date when;
     
     @NotBlank(message = "Name may not be empty.")
     private String name;
     
-    @DBRef
+    @JsonIgnore
+    private String productOwnerId;
+    
+    @Transient
     private User productOwner;
     
-    @DBRef
     private List<UserStory> stories;
     
     public Product() {
         
-        createdOn = new Date();
+        when = new Date();
         stories = new ArrayList<UserStory>();
     }
 
-    public Date getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(Date createdOn) {
-        this.createdOn = createdOn;
+    public Date getWhen() {
+        return when;
     }
 
     public String getName() {
@@ -43,20 +42,22 @@ public class Product extends MongoObject {
         this.name = name;
     }
 
+    public String getProductOwnerId() {
+        return productOwnerId;
+    }
+    
     public User getProductOwner() {
         return productOwner;
     }
 
     public void setProductOwner(User productOwner) {
+        
+        this.productOwnerId = productOwner.getId();
         this.productOwner = productOwner;
     }
 
     public List<UserStory> getStories() {
         return stories;
-    }
-
-    public void setStories(List<UserStory> stories) {
-        this.stories = stories;
     }
     
     public boolean canBeDeletedBy(User user) {

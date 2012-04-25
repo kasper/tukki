@@ -48,13 +48,6 @@ public class UserRoleServiceTest {
     }
     
     @Test
-    public void addingNullReturnsNull() {
-        
-        UserRole role = userRoleService.save(null);
-        assertEquals(null, role);
-    }
-    
-    @Test
     public void addingUserRoleIncreasesCount() {
         
         long startCount = userRoleService.count();
