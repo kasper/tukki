@@ -268,13 +268,28 @@ tukki.views.Register = Backbone.View.extend({
                        .val()
                        .trim();
                        
+    var passwordConfirmation = this.$('[data-id="password-confirmation"]')
+                                   .val()
+                                   .trim();
+                       
     var email = this.$('[data-id="email"]')
                     .val()
                     .trim();
+    
+    var self = this;
+    
+    // Passwords do not match
+    if (password != passwordConfirmation) {
+    
+      self.$('[data-id="password-control-group"]').addClass('error');
+      
+      self.$('[data-id="alert"]').addClass('alert-error')
+                                 .html('<b>Oh snap!</b> Passwords do not match.')
+                                 .fadeIn();
+      return;
+    }
      
     var user = new tukki.models.User();
-                       
-    var self = this;
     
     // Save user
     user.save({username: username, password: password, email: email}, {
