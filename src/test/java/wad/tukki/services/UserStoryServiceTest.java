@@ -15,7 +15,7 @@ import wad.tukki.models.UserStory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-context.xml",
-                                   "file:src/main/webapp/WEB-INF/spring-database.xml",
+                                   "file:src/main/webapp/WEB-INF/spring-test-database.xml",
                                    "file:src/main/webapp/WEB-INF/spring-security.xml"})
 public class UserStoryServiceTest {
     

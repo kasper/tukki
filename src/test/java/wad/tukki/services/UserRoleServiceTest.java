@@ -16,7 +16,7 @@ import wad.tukki.models.UserRole;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-context.xml",
-                                   "file:src/main/webapp/WEB-INF/spring-database.xml",
+                                   "file:src/main/webapp/WEB-INF/spring-test-database.xml",
                                    "file:src/main/webapp/WEB-INF/spring-security.xml"})
 public class UserRoleServiceTest {
 

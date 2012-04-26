@@ -19,27 +19,6 @@
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
     </bean>
- 
-    <beans profile="dev,default">
-        <!-- Connection to local MongoDB server -->
-        <mongo:db-factory host="127.0.0.1" port="27017" dbname="tukki" />
-    </beans>
     
-    <!-- Heroku -->
-    <beans profile="production">
-        <bean id="databaseURI" class="java.net.URI">
-            <constructor-arg value="${MONGOHQ_URL}" />
-        </bean>
-        
-        <bean id="mongoURI" class="com.mongodb.MongoURI">
-            <constructor-arg value="${MONGOHQ_URL}" />
-        </bean>
-        
-        <!-- Connection to MongoHQ server -->
-        <mongo:db-factory host="#{@databaseURI.getHost()}"
-                          port="#{@databaseURI.getPort()}"
-                          dbname="#{@mongoURI.getDatabase()}"
-                          username="#{@mongoURI.getUsername()}"
-                          password="#{new String(@mongoURI.getPassword())}" />
-    </beans>
+    <mongo:db-factory host="127.0.0.1" port="27017" dbname="test" />
 </beans>
