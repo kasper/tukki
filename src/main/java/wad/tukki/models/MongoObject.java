@@ -11,10 +11,6 @@ public abstract class MongoObject {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     @Override
     public boolean equals(Object obj) {
         
@@ -27,7 +23,7 @@ public abstract class MongoObject {
         }
         
         final MongoObject other = (MongoObject) obj;
-        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+        if ((this.getId() == null) ? (other.getId() != null) : !this.getId().equals(other.getId())) {
             return false;
         }
         
@@ -38,7 +34,7 @@ public abstract class MongoObject {
     public int hashCode() {
         
         int hash = 7;
-        hash = 41 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 41 * hash + (this.getId() != null ? this.getId().hashCode() : 0);
         
         return hash;
     }

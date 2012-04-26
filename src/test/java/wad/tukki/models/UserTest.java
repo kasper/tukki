@@ -6,6 +6,21 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class UserTest {
+    
+    private class UserRoleStub extends UserRole {
+        
+        private String stubId;
+        
+        public UserRoleStub(String stubId, String name) {
+            super(name);
+            this.stubId = stubId;
+        }
+        
+        @Override
+        public String getId() {
+            return stubId;
+        }
+    }
 
     @Test
     public void addedUserRoleFound() {
@@ -13,8 +28,8 @@ public class UserTest {
         User user = new User();
         user.setRoles(new ArrayList<UserRole>());
         
-        UserRole role = new UserRole("user");
-        role.setId("testUserRoleId");
+        UserRole role = new UserRoleStub("testUserRoleId", "user");
+        
         user.addRole(role);
         
         assertTrue(user.getRoles().contains(role));
@@ -26,27 +41,12 @@ public class UserTest {
         User user = new User();
         user.setRoles(new ArrayList<UserRole>());
         
-        UserRole a = new UserRole("user");
-        a.setId("testUserRoleId");
-        
-        UserRole b = new UserRole("user");
-        b.setId("testUserRoleId");
+        UserRole a = new UserRoleStub("testUserRoleId", "user");
+        UserRole b = new UserRoleStub("testUserRoleId", "user");
         
         user.addRole(a);
         user.addRole(b);
-        
+
         assertEquals(1, user.getRoles().size());
-    }
-    
-    @Test
-    public void equalUsers() {
-        
-        User a = new User();
-        a.setId("testUserId");
-        
-        User b = new User();
-        b.setId("testUserId");
-        
-        assertTrue(a.equals(b));
     }
 }
