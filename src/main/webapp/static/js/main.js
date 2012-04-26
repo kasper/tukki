@@ -578,12 +578,25 @@ tukki.controllers.Authentication = {
     });
   },
   
-  user: function(callback) {
-    
-    var self = this;
+  user: function(callback, error) {
   
     $.get('/api/user', function(data) {
       callback(data);
+    }).error(function(data) {
+      error(data);
+    });
+  },
+  
+  authenticated: function(callback) {
+  
+    var test = this.user(
+    
+    function(data) {
+      callback(true);
+    },
+    
+    function(error) {
+      callback(false);
     });
   }
   
@@ -603,7 +616,18 @@ tukki.routers.Main = Backbone.Router.extend({
 
   // Login
   login: function() {
-    this.renderLogin();
+  
+    var self = this;
+  
+    tukki.controllers.Authentication.authenticated(function(authenticated) {
+    
+      if (authenticated) {
+        self.navigate('/', {trigger: true});
+        return;
+      }
+    
+      self.renderLogin();
+    });
   },
   
   // Logout
@@ -619,7 +643,18 @@ tukki.routers.Main = Backbone.Router.extend({
   
   // Register
   register: function() {
-    this.renderRegister();
+  
+    var self = this;
+  
+    tukki.controllers.Authentication.authenticated(function(authenticated) {
+    
+      if (authenticated) {
+        self.navigate('/', {trigger: true});
+        return;
+      }
+    
+      self.renderRegister();
+    });
   },
   
   // Render login
