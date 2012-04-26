@@ -31,18 +31,6 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
     public void invalidate() {
         SecurityContextHolder.clearContext();
     }
-
-    @Override
-    public boolean isAuthenticated() {
-        
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication == null) {
-            return false;
-        }
-        
-        return authentication.isAuthenticated();
-    }
     
     @Override
     public Authentication getAuthentication() {
@@ -50,9 +38,21 @@ public class AuthenticationServiceImplementation implements AuthenticationServic
     }
 
     @Override
+    public boolean isAuthenticated() {
+        
+        Authentication authentication = getAuthentication();
+        
+        if (authentication == null) {
+            return false;
+        }
+        
+        return authentication.isAuthenticated();
+    }
+
+    @Override
     public String getUsername() {
         
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = getAuthentication();
         
         if (authentication == null) {
             return null;

@@ -7,7 +7,7 @@ public interface AuthenticationService {
 
     public void authenticate(User user);
     public void invalidate();
-    public boolean isAuthenticated();
     public Authentication getAuthentication();
+    public boolean isAuthenticated();
     public String getUsername();
 }
