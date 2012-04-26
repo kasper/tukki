@@ -52,6 +52,7 @@ tukki.views.DeleteConfirmation = Backbone.View.extend({
   
     'click [data-id="cancel"]': 'cancel',
     'click [data-id="delete"]': 'delete'
+    
   },
 
   initialize: function() {
@@ -82,6 +83,7 @@ tukki.views.DeleteConfirmation = Backbone.View.extend({
     
     var self = this;
     
+    // Delete model
     this.model.destroy({
     
       success: function(data) {
@@ -91,7 +93,7 @@ tukki.views.DeleteConfirmation = Backbone.View.extend({
       },
       
       error: function(data) {    
-        alert('Error while deleting product');
+        console.log('Error while deleting product.');
       }
     
     });
@@ -199,7 +201,7 @@ tukki.views.Login = Backbone.View.extend({
       
       // Request failed
       error: function(error) {
-        alert('Error while logging in.');
+        console.log('Error while logging in: ' + error + '.');
       }
     });
   },
@@ -291,12 +293,12 @@ tukki.views.Register = Backbone.View.extend({
             
           },
           
-          authenticationFailed: function(data) {
-            alert('Authentication failed');
+          authenticationFailed: function(error) {
+            console.log('Authentication failed: ' + error '.');
           },
           
           error: function(error) {
-            alert('Error while authentication.');
+            console.log('Error while authentication: ' + error + '.');
           }
         
         });
@@ -343,7 +345,7 @@ tukki.views.Register = Backbone.View.extend({
           return;
         }
         
-        alert('Error while creating new user: ' + response.status + ' ' + response.statusText);
+        console.log('Error while creating new user: ' + response.status + ' ' + response.statusText + '.');
       }
     });
   },
@@ -459,7 +461,7 @@ tukki.views.ProductList = Backbone.View.extend({
           return;
         }
         
-        alert('Error while creating new product: ' + response.status + ' ' + response.statusText);
+        console.log('Error while creating new product: ' + response.status + ' ' + response.statusText + '.');
       }
     });
   },
@@ -678,7 +680,7 @@ tukki.routers.Product = Backbone.Router.extend({
           return;
         }
         
-        alert('Error while loading products: ' + response.status + ' ' + response.statusText);
+        console.log('Error while loading products: ' + response.status + ' ' + response.statusText + '.');
       }
     });
     
@@ -710,7 +712,7 @@ tukki.routers.Product = Backbone.Router.extend({
           return;
         }
       
-        alert('Error while loading product: ' + response.status + ' ' + response.statusText);
+        console.log('Error while loading product: ' + response.status + ' ' + response.statusText + '.');
       }
     });
     
