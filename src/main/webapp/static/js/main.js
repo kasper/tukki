@@ -294,7 +294,7 @@ tukki.views.Register = Backbone.View.extend({
           },
           
           authenticationFailed: function(error) {
-            console.log('Authentication failed: ' + error '.');
+            console.log('Authentication failed: ' + error + '.');
           },
           
           error: function(error) {
