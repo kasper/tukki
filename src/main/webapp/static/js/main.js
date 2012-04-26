@@ -58,6 +58,12 @@ tukki.collections.Products = Backbone.Collection.extend({
   
 });
 
+tukki.collections.UserStories = Backbone.Collection.extend({
+
+  model: tukki.models.UserStory
+
+});
+
 /* Views */
 
 tukki.views.Navigation = Backbone.View.extend({
@@ -453,6 +459,10 @@ tukki.views.NewUserStory = Backbone.View.extend({
     story.save({scenario: scenario, given: given, when: when, then: then}, {
     
       success: function() {
+      
+        // Add story to collection
+        self.collection.add(story, {at: self.collection.length});
+      
         $(self.el).modal('hide');
       },
       
@@ -527,6 +537,22 @@ tukki.views.NewUserStory = Backbone.View.extend({
     
     // Remove possible error state of targeted input
     self.$('[data-id="' + event.currentTarget.attributes['data-id'].value + '-control-group"]').removeClass('error');
+  }
+  
+});
+
+tukki.views.ProductListItem = Backbone.View.extend({
+
+  initialize: function() {
+    this.render();
+  },
+  
+  render: function() {
+  
+    // Display list item
+    var productListItemTemplate = $('#product-list-item-template').html();
+    var output = Mustache.render(productListItemTemplate, this.model.toJSON());
+    $(this.el).append(output);
   }
   
 });
@@ -643,7 +669,7 @@ tukki.views.ProductList = Backbone.View.extend({
   
 });
 
-tukki.views.ProductListItem = Backbone.View.extend({
+tukki.views.UserStoryTableItem = Backbone.View.extend({
 
   initialize: function() {
     this.render();
@@ -652,8 +678,8 @@ tukki.views.ProductListItem = Backbone.View.extend({
   render: function() {
   
     // Display list item
-    var productListItemTemplate = $('#product-list-item-template').html();
-    var output = Mustache.render(productListItemTemplate, this.model.toJSON());
+    var userStoryTableItemTemplate = $('#user-story-table-item-template').html();
+    var output = Mustache.render(userStoryTableItemTemplate, this.model.toJSON());
     $(this.el).append(output);
   }
   
@@ -685,9 +711,12 @@ tukki.views.Product = Backbone.View.extend({
     var output = Mustache.render(productTemplate, model);
     $(this.el).html(output);
     
-    var self = this;
+    // Hide alert
+    this.$('[data-id="alert"]').hide();
     
     this.$('[data-id="delete"]').hide();
+    
+    var self = this;
     
     tukki.controllers.Authentication.user(function(authenticationUser) {
       
@@ -695,6 +724,34 @@ tukki.views.Product = Backbone.View.extend({
       if (authenticationUser.username == model.productOwner.username) {
         self.$('[data-id="delete"]').show();
       }
+    });
+    
+    this.renderUserStories();
+  },
+  
+  renderUserStories: function() {
+  
+    var alert = this.$('[data-id="alert"]');
+      
+    // No stories
+    if (this.collection.length == 0) {
+      
+      $(alert).addClass('alert-info')
+              .html('No user stories.')
+              .fadeIn();
+              
+      $('#user-story-table').hide();
+    } else {
+      $(alert).fadeOut();
+      $('#user-story-table').show();
+    }
+  
+    var tableBodyElement = this.$('#user-story-table tbody');
+    $(tableBodyElement).empty();
+    
+    // Display each table item
+    this.collection.each(function(model) {
+      new tukki.views.UserStoryTableItem({el: tableBodyElement, model: model})
     });
   },
   
@@ -707,7 +764,7 @@ tukki.views.Product = Backbone.View.extend({
   newUserStory: function(event) {
     
     event.preventDefault();
-    new tukki.views.NewUserStory({el: $('#modal'), model: this.model});
+    new tukki.views.NewUserStory({el: $('#modal'), model: this.model, collection: this.collection});
   }
 
 });
@@ -768,7 +825,7 @@ tukki.controllers.Authentication = {
   
   authenticated: function(callback) {
   
-    var test = this.user(
+    this.user(
     
     function(data) {
       callback(true);
@@ -986,7 +1043,13 @@ tukki.routers.Product = Backbone.Router.extend({
   
   // Render product
   renderProduct: function(product) {
-    new tukki.views.Product({el: $('#content'), model: product});
+    
+    var stories = new tukki.collections.UserStories(product.attributes.stories);
+    var productView = new tukki.views.Product({el: $('#content'), model: product, collection: stories});
+    
+    stories.on("add", function() {
+      productView.renderUserStories();
+    });
   }
   
 });

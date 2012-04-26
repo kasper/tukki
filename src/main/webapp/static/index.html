@@ -251,6 +251,13 @@
     
     </script>
     
+    <!-- Product list item -->
+    <script type="text/template" id="product-list-item-template">
+      
+      <li><a href="#/product/{{id}}">{{name}}</a></li>
+      
+    </script>
+    
     <!-- Product list -->
     <script type="text/template" id="product-list-template">
     
@@ -277,10 +284,12 @@
       
     </script>
     
-    <!-- Product list item -->
-    <script type="text/template" id="product-list-item-template">
+    <!-- User story table item -->
+    <script type="text/template" id="user-story-table-item-template">
       
-      <li><a href="#/product/{{id}}">{{name}}</a></li>
+      <tr>
+        <td>{{scenario}}</td>
+      </tr>
       
     </script>
     
@@ -305,6 +314,21 @@
         <dd>{{formattedWhenAdded}}</dd>
         
       </dl>
+      
+      <div class="alert" data-id="alert">
+      
+      </div>
+      
+      <table class="table" id="user-story-table">
+        <thead>
+          <tr>
+            <th>Scenario</th>
+          </tr>
+        </thead>
+        <tbody>
+        
+        </tbody>
+      </table>
     
     </script>
   </body>
