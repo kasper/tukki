@@ -4,7 +4,7 @@ import com.mongodb.Mongo;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import wad.tukki.models.Product;
+import wad.tukki.models.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-context.xml",
@@ -23,12 +24,16 @@ public class ProductServiceTest {
     private MongoTemplate mongoTemplate;
     
     @Autowired
+    private UserService userService;
+    
+    @Autowired
     private ProductService productService;
     
     @AfterClass
     public static void afterClass() throws UnknownHostException {
         
         MongoTemplate mongoTemplate = new MongoTemplate(new Mongo(), "test");
+        mongoTemplate.dropCollection(User.class);
         mongoTemplate.dropCollection(Product.class);
     }
     
@@ -53,7 +58,7 @@ public class ProductServiceTest {
     
     @Test
     public void nonExistingProductNotFoundById() {
-        assertEquals(null, productService.findById("nontExistingProductId"));
+        assertNull(productService.findById("nontExistingProductId"));
     }
     
     @Test
@@ -75,7 +80,7 @@ public class ProductServiceTest {
         product = productService.save(product);
         productService.delete(product.getId());
         
-        assertEquals(null, productService.findById(product.getId()));
+        assertNull(productService.findById(product.getId()));
     }
     
     @Test
@@ -96,5 +101,18 @@ public class ProductServiceTest {
         products.add(d);
         
         assertEquals(products, productService.findAll());
+    }
+    
+    @Test
+    public void productOwnerResolved() {
+        
+        User user = userService.save(new User());
+        
+        Product product = new Product();
+        product.setProductOwner(user);
+        
+        product = productService.save(product);
+        
+        assertEquals(product.getProductOwner(), userService.findById(product.getProductOwnerId()));
     }
 }

@@ -4,7 +4,7 @@ import com.mongodb.Mongo;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ public class UserStoryServiceTest {
     
     @Test
     public void nonExistingUserStoryNotFoundById() {
-        assertEquals(null, userStoryService.findById("nontExistingUserStoryId"));
+        assertNull(userStoryService.findById("nontExistingUserStoryId"));
     }
     
     @Test
@@ -75,7 +75,7 @@ public class UserStoryServiceTest {
         story = userStoryService.save(story);
         userStoryService.delete(story.getId());
         
-        assertEquals(null, userStoryService.findById(story.getId()));
+        assertNull(userStoryService.findById(story.getId()));
     }
     
     @Test

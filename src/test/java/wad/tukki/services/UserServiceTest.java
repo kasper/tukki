@@ -3,14 +3,17 @@ package wad.tukki.services;
 import com.mongodb.Mongo;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import wad.tukki.exceptions.UsernameExistsException;
@@ -35,6 +38,24 @@ public class UserServiceTest {
     private UserRole existingRole;
     private User existingUser;
     
+    @BeforeClass
+    public static void beforeClass() throws UnknownHostException {
+        
+        MongoTemplate mongoTemplate = new MongoTemplate(new Mongo(), "test");
+        
+        UserRole role = new UserRole("user");
+        
+        mongoTemplate.save(role);
+        
+        User user = new User();
+        user.setUsername("kasper");
+        
+        role = mongoTemplate.findOne(new Query(Criteria.where("name").in("user")), UserRole.class);
+        user.addRole(role);
+        
+        mongoTemplate.save(user);
+    }
+    
     @AfterClass
     public static void afterClass() throws UnknownHostException {
         
@@ -46,22 +67,8 @@ public class UserServiceTest {
     @Before
     public void setUp() {
         
-        UserRole role = new UserRole("user");
-        
-        if (userRoleService.findByName("user") == null) {
-            existingRole = userRoleService.save(role);
-        } else {
-            existingRole = userRoleService.findByName("user");
-        }
-        
-        User user = new User();
-        user.setUsername("kasper");
-        
-        if (userService.findByUsername("kasper") == null) {
-            existingUser = userService.save(user);
-        } else {
-            existingUser = userService.findByUsername("kasper");
-        }
+        existingRole = userRoleService.findByName("user");
+        existingUser = userService.findByUsername("kasper");
     }
     
     @Test
@@ -85,7 +92,7 @@ public class UserServiceTest {
     
     @Test
     public void nonExistingUserNotFoundById() {
-        assertEquals(null, userService.findById("nonExistingUserId"));
+        assertNull(userService.findById("nonExistingUserId"));
     }
     
     @Test
@@ -95,7 +102,7 @@ public class UserServiceTest {
     
     @Test
     public void nonExistingUserNotFoundByUsername() {
-        assertEquals(null, userService.findByUsername("nonExistingUsername"));
+        assertNull(userService.findByUsername("nonExistingUsername"));
     }
     
     @Test
@@ -144,7 +151,16 @@ public class UserServiceTest {
         user = userService.save(user);
         userService.delete(user.getId());
         
-        assertEquals(null, userService.findById(user.getId()));
+        assertNull(userService.findById(user.getId()));
+    }
+    
+    @Test
+    public void rolesResolved() {
+        
+        List<UserRole> roles = new ArrayList<UserRole>();
+        roles.add(existingRole);
+        
+        assertEquals(roles, existingUser.getRoles());
     }
     
     @Test

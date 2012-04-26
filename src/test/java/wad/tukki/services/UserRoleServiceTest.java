@@ -4,8 +4,9 @@ import com.mongodb.Mongo;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,15 @@ public class UserRoleServiceTest {
     
     private UserRole existingRole;
     
+    @BeforeClass
+    public static void beforeClass() throws UnknownHostException {
+        
+        UserRole role = new UserRole("user");
+        
+        MongoTemplate mongoTemplate = new MongoTemplate(new Mongo(), "test");
+        mongoTemplate.save(role);
+    }
+    
     @AfterClass
     public static void afterClass() throws UnknownHostException {
         
@@ -37,14 +47,7 @@ public class UserRoleServiceTest {
     
     @Before
     public void setUp() {
-        
-        UserRole role = new UserRole("user");
-        
-        if (userRoleService.findByName("user") == null) {
-            existingRole = userRoleService.save(role);
-        } else {
-            existingRole = userRoleService.findByName("user");
-        }
+        existingRole = userRoleService.findByName("user");
     }
     
     @Test
@@ -68,7 +71,7 @@ public class UserRoleServiceTest {
     
     @Test
     public void nonExistingUserRoleNotFoundById() {
-        assertEquals(null, userRoleService.findById("nonExistingUserRoleId"));
+        assertNull(userRoleService.findById("nonExistingUserRoleId"));
     }
     
     @Test
@@ -78,7 +81,7 @@ public class UserRoleServiceTest {
     
     @Test
     public void nonExistingUserRoleNotFoundByName() {
-        assertEquals(null, userRoleService.findByName("nonExistingName"));
+        assertNull(userRoleService.findByName("nonExistingName"));
     }
     
     @Test
@@ -100,7 +103,7 @@ public class UserRoleServiceTest {
         role = userRoleService.save(role);
         userRoleService.delete(role.getId());
         
-        assertEquals(null, userRoleService.findById(role.getId()));
+        assertNull(userRoleService.findById(role.getId()));
     }
     
     @Test

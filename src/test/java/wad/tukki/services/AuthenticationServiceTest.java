@@ -5,7 +5,7 @@ import java.net.UnknownHostException;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import wad.tukki.exceptions.UsernameExistsException;
 import wad.tukki.models.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -28,24 +27,22 @@ public class AuthenticationServiceTest {
     @Autowired
     AuthenticationService authenticationService;
     
-    @AfterClass
-    public static void afterClass() throws UnknownHostException {
-        
-        MongoTemplate mongoTemplate = new MongoTemplate(new Mongo(), "test");
-        mongoTemplate.dropCollection(User.class);
-    }
-    
-    
-    @Before
-    public void setUp() throws UsernameExistsException {
+    @BeforeClass
+    public static void beforeClass() throws UnknownHostException {
         
         User user = new User();
         user.setUsername("kasper");
         user.setPassword("repsakkasper");
         
-        if (userService.findByUsername(user.getUsername()) == null) {
-            userService.create(user);
-        }
+        MongoTemplate mongoTemplate = new MongoTemplate(new Mongo(), "test");
+        mongoTemplate.save(user);
+    }
+    
+    @AfterClass
+    public static void afterClass() throws UnknownHostException {
+        
+        MongoTemplate mongoTemplate = new MongoTemplate(new Mongo(), "test");
+        mongoTemplate.dropCollection(User.class);
     }
     
     @After
@@ -76,6 +73,23 @@ public class AuthenticationServiceTest {
     }
     
     @Test
+    public void getAuthenticationOfAuthenticatedUser() {
+        
+        User user = new User();
+        user.setUsername("kasper");
+        user.setPassword("repsakkasper");
+        
+        authenticationService.authenticate(user);
+        
+        assertNotNull(authenticationService.getAuthentication());
+    }
+    
+    @Test
+    public void getAuthenticationOfUnauthenticatedUser() {
+        assertNull(authenticationService.getAuthentication());
+    }
+    
+    @Test
     public void afterInvalidationNotAuthenticated() {
         
         User user = new User();
@@ -89,8 +103,20 @@ public class AuthenticationServiceTest {
     }
     
     @Test
+    public void getUsernameOfAuthenticatedUser() {
+        
+        User user = new User();
+        user.setUsername("kasper");
+        user.setPassword("repsakkasper");
+        
+        authenticationService.authenticate(user);
+        
+        assertEquals(user.getUsername(), authenticationService.getUsername());
+    }
+    
+    @Test
     public void getUsernameOfUnauthenticatedUserReturnsNull() {
-        assertEquals(null, authenticationService.getUsername());
+        assertNull(authenticationService.getUsername());
     }
     
     @Test
