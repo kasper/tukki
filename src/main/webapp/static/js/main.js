@@ -35,6 +35,20 @@ tukki.models.Product = Backbone.Model.extend({
   
 });
 
+tukki.models.UserStory = Backbone.Model.extend({
+
+  initialize: function(attributes, options) {
+    
+    this.attributes = attributes;
+    this.options = options;
+  },
+
+  urlRoot: function() {
+    return 'api/product/' + this.options.id + '/story';
+  }
+  
+});
+
 /* Collections */
 
 tukki.collections.Products = Backbone.Collection.extend({
@@ -45,61 +59,6 @@ tukki.collections.Products = Backbone.Collection.extend({
 });
 
 /* Views */
-
-tukki.views.DeleteConfirmation = Backbone.View.extend({
-
-  events: {
-  
-    'click [data-id="cancel"]': 'cancel',
-    'click [data-id="delete"]': 'delete'
-    
-  },
-
-  initialize: function() {
-    this.render();
-  },
-  
-  render: function() {
-  
-    $(this.el).undelegate();
-    
-    // Display delete confirmation
-    var deleteConfirmationTemplate = $('#delete-confirmation-template').html();
-    $(this.el).html(deleteConfirmationTemplate);
-    
-    // Show modal
-    $(this.el).modal();
-  },
-  
-  cancel: function(event) {
-    
-    event.preventDefault();
-    $(this.el).modal('hide');
-  },
-  
-  delete: function(event) {
-  
-    event.preventDefault();
-    
-    var self = this;
-    
-    // Delete model
-    this.model.destroy({
-    
-      success: function(data) {
-      
-        $(self.el).modal('hide');
-        tukki.app.navigate('/', {trigger: true});
-      },
-      
-      error: function(data) {    
-        console.log('Error while deleting product.');
-      }
-    
-    });
-  }
-
-});
 
 tukki.views.Navigation = Backbone.View.extend({
 
@@ -379,6 +338,199 @@ tukki.views.Register = Backbone.View.extend({
 
 });
 
+tukki.views.DeleteConfirmation = Backbone.View.extend({
+
+  events: {
+  
+    'click [data-id="cancel"]': 'cancel',
+    'click [data-id="delete"]': 'delete'
+    
+  },
+
+  initialize: function() {
+    this.render();
+  },
+  
+  render: function() {
+  
+    $(this.el).undelegate();
+    
+    // Display delete confirmation
+    var deleteConfirmationTemplate = $('#delete-confirmation-template').html();
+    $(this.el).html(deleteConfirmationTemplate);
+    
+    // Show modal
+    $(this.el).modal();
+  },
+  
+  cancel: function(event) {
+    
+    event.preventDefault();
+    $(this.el).modal('hide');
+  },
+  
+  delete: function(event) {
+  
+    event.preventDefault();
+    
+    var self = this;
+    
+    // Delete model
+    this.model.destroy({
+    
+      success: function(data) {
+      
+        $(self.el).modal('hide');
+        tukki.app.navigate('/', {trigger: true});
+      },
+      
+      error: function(data) {    
+        console.log('Error while deleting product.');
+      }
+    
+    });
+  }
+
+});
+
+tukki.views.NewUserStory = Backbone.View.extend({
+
+  events: {
+  
+    'click [data-id="add"]':        'addUserStory',
+    'click [data-id="cancel"]':     'cancel',
+    'keydown [data-id="scenario"]': 'keydown',
+    'keydown [data-id="given"]':    'keydown',
+    'keydown [data-id="when"]':     'keydown',
+    'keydown [data-id="then"]':     'keydown'
+    
+  },
+
+  initialize: function() {
+    this.render();
+  },
+  
+  render: function() {
+  
+    $(this.el).undelegate();
+    
+    // Display delete confirmation
+    var newUserStoryTemplate = $('#new-user-story-template').html();
+    $(this.el).html(newUserStoryTemplate);
+    
+    // Hide alert
+    this.$('[data-id="alert"]').hide();
+    
+    // Show modal
+    $(this.el).modal();
+  },
+  
+  addUserStory: function(event) {
+  
+    event.preventDefault();
+    
+    var scenario = this.$('[data-id="scenario"]')
+                       .val()
+                       .trim();
+                       
+    var given = this.$('[data-id="given"]')
+                    .val()
+                    .trim();
+                    
+    var when = this.$('[data-id="when"]')
+                   .val()
+                   .trim();
+                       
+    var then = this.$('[data-id="then"]')
+                   .val()
+                   .trim();
+                             
+    var story = new tukki.models.UserStory({}, {id: this.model.id});
+    
+    var self = this;
+    
+    // Save story
+    story.save({scenario: scenario, given: given, when: when, then: then}, {
+    
+      success: function() {
+        $(self.el).modal('hide');
+      },
+      
+      error: function(model, response) {
+      
+        if (response.status == 400) {
+          
+          var errors = JSON.parse(response.responseText).errors;
+          var errorMessages = ['<b>Oh snap!</b>'];
+          
+          if (errors.scenario) {
+          
+            // Validation error for scenario
+            if (errors.scenario.code == 6) {
+              self.$('[data-id="scenario-control-group"]').addClass('error');
+              errorMessages.push(errors.scenario.message);
+            }
+          }
+          
+          if (errors.given) {
+            
+            // Validation error for given
+            if (errors.given.code == 6) {
+              self.$('[data-id="given-control-group"]').addClass('error');
+              errorMessages.push(errors.given.message);
+            }
+          }
+          
+          if (errors.when) {
+          
+            // Validation error for when
+            if (errors.when.code == 6) {
+              self.$('[data-id="when-control-group"]').addClass('error');
+              errorMessages.push(errors.when.message);
+            }
+          }
+          
+          if (errors.then) {
+          
+            // Validation error for then
+            if (errors.then.code == 6) {
+              self.$('[data-id="then-control-group"]').addClass('error');
+              errorMessages.push(errors.then.message);
+            }
+          }
+          
+          self.$('[data-id="alert"]').addClass('alert-error')
+                                     .html(errorMessages.join(' '))
+                                     .fadeIn();
+          
+          return;
+        }
+        
+        console.log('Error while creating new story: ' + response.status + ' ' + response.statusText + '.');
+      }
+    });
+  },
+  
+  cancel: function(event) {
+    
+    event.preventDefault();
+    $(this.el).modal('hide');
+  },
+  
+  keydown: function(event) {
+  
+    // Enter pressed
+    if (event.which == 13) {
+      this.addUserStory(event);
+      return;
+    }
+    
+    // Remove possible error state of targeted input
+    self.$('[data-id="' + event.currentTarget.attributes['data-id'].value + '-control-group"]').removeClass('error');
+  }
+  
+});
+
 tukki.views.ProductList = Backbone.View.extend({
 
   events: {
@@ -393,6 +545,8 @@ tukki.views.ProductList = Backbone.View.extend({
   },
   
   render: function() {
+  
+    $(this.el).undelegate();
   
     // Display product list
     var productListTemplate = $('#product-list-template').html();
@@ -509,7 +663,9 @@ tukki.views.Product = Backbone.View.extend({
 
   events: {
   
-    'click [data-id="delete"]': 'delete'
+    'click [data-id="new-user-story"]': 'newUserStory',
+    'click [data-id="delete"]':         'delete'
+    
   },
 
   initialize: function() {
@@ -517,10 +673,12 @@ tukki.views.Product = Backbone.View.extend({
   },
   
   render: function() {
+  
+    $(this.el).undelegate();
     
     var model = this.model.toJSON();
     
-    model.formattedWhen = new Date(model.when).format('mmmm dS, yyyy');
+    model.formattedWhenAdded = new Date(model.whenAdded).format('mmmm dS, yyyy');
     
     // Display product
     var productTemplate = $('#product-template').html();
@@ -544,6 +702,12 @@ tukki.views.Product = Backbone.View.extend({
     
     event.preventDefault();
     new tukki.views.DeleteConfirmation({el: $('#modal'), model: this.model});
+  },
+  
+  newUserStory: function(event) {
+    
+    event.preventDefault();
+    new tukki.views.NewUserStory({el: $('#modal'), model: this.model});
   }
 
 });

@@ -3,6 +3,7 @@ package wad.tukki.services;
 import com.mongodb.Mongo;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import wad.tukki.models.Product;
 import wad.tukki.models.User;
+import wad.tukki.models.UserStory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-context.xml",
@@ -114,5 +116,30 @@ public class ProductServiceTest {
         product = productService.save(product);
         
         assertEquals(product.getProductOwner(), userService.findById(product.getProductOwnerId()));
+    }
+    
+    @Test
+    public void userStoryCreatorsResolved() {
+        
+        User user = userService.save(new User());
+        
+        Product product = new Product();
+        
+        UserStory story = new UserStory();
+        story.setCreator(user);
+        product.addUserStory(story);
+        
+        product = productService.save(product);
+        
+        List<User> expectedStoryCreators = new ArrayList<User>();
+        expectedStoryCreators.add(user);
+        
+        List<User> actualStoryCreators = new ArrayList<User>();
+        
+        for (UserStory actualStory : product.getStories()) {
+            actualStoryCreators.add(actualStory.getCreator());
+        }
+        
+        assertEquals(expectedStoryCreators, actualStoryCreators);
     }
 }

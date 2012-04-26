@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class User extends MongoObject {
     
-    private Date when;
+    private Date whenRegistered;
     
     @NotBlank(message = "Username may not be blank.")
     private String username;
@@ -34,13 +34,13 @@ public class User extends MongoObject {
     
     public User() {
         
-        when = new Date();
+        whenRegistered = new Date();
         roleIds = new ArrayList<String>();
         roles = new ArrayList<UserRole>();
     }
 
-    public Date getWhen() {
-        return when;
+    public Date getWhenRegistered() {
+        return whenRegistered;
     }
 
     public String getEmail() {

@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Product extends MongoObject {
     
-    private Date when;
+    private Date whenAdded;
     
     @NotBlank(message = "Name may not be empty.")
     private String name;
@@ -26,12 +26,12 @@ public class Product extends MongoObject {
     
     public Product() {
         
-        when = new Date();
+        whenAdded = new Date();
         stories = new ArrayList<UserStory>();
     }
 
-    public Date getWhen() {
-        return when;
+    public Date getWhenAdded() {
+        return whenAdded;
     }
 
     public String getName() {

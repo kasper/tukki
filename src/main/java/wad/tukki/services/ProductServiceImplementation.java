@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wad.tukki.models.Product;
+import wad.tukki.models.UserStory;
 import wad.tukki.repositories.ProductRepository;
 
 @Service
@@ -14,6 +15,21 @@ public class ProductServiceImplementation implements ProductService {
     
     @Autowired
     private ProductRepository productRepository;
+    
+    private void resolveLinks(Product... products) {
+        
+        resolveProductOwner(products);
+        resolveUserStoryCreators(products);
+    }
+    
+    private void resolveUserStoryCreators(Product... products) {
+        
+        for (Product product : products) {
+            for (UserStory story : product.getStories()) {
+                story.setCreator(userService.findById(story.getCreatorId()));
+            }
+        }
+    }
     
     private void resolveProductOwner(Product... products) {
         
@@ -29,7 +45,7 @@ public class ProductServiceImplementation implements ProductService {
     public Product save(Product product) {
         
         product = productRepository.save(product);
-        resolveProductOwner(product);
+        resolveLinks(product);
         
         return product;
     }
@@ -43,7 +59,7 @@ public class ProductServiceImplementation implements ProductService {
             return null;
         }
         
-        resolveProductOwner(product);
+        resolveLinks(product);
         
         return product;
     }
@@ -56,7 +72,7 @@ public class ProductServiceImplementation implements ProductService {
         Product[] productsAsArray = new Product[products.size()];
         products.toArray(productsAsArray);
         
-        resolveProductOwner(productsAsArray);
+        resolveLinks(productsAsArray);
         
         return products;
     }

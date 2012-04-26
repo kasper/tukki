@@ -64,25 +64,6 @@
   
     <!-- Templates -->
     
-    <!-- Delete confirmation dialog -->
-    
-    <script type="text/template" id="delete-confirmation-template">
-    
-      <div class="modal-header">
-        <h3>Delete confirmation</h3>
-      </div>
-      
-      <div class="modal-body">
-         <p>Are you sure you want to delete?</p>  
-      </div>
-      
-      <div class="modal-footer">
-        <a href="#" class="btn" data-id="cancel">Cancel</a>
-        <a href="#" class="btn btn-danger" data-id="delete">Delete</a>
-      </div>
-    
-    </script>
-    
     <!-- Login -->
     <script type="text/template" id="login-template">
     
@@ -187,6 +168,89 @@
     
     </script>
     
+    <!-- Delete confirmation dialog --> 
+    <script type="text/template" id="delete-confirmation-template">
+    
+      <div class="modal-header">
+        <h3>Delete confirmation</h3>
+      </div>
+      
+      <div class="modal-body">
+         <p>Are you sure you want to delete?</p>  
+      </div>
+      
+      <div class="modal-footer">
+        <a href="#" class="btn" data-id="cancel">Cancel</a>
+        <a href="#" class="btn btn-danger" data-id="delete">Delete</a>
+      </div>
+    
+    </script>
+    
+    <!-- New user story -->
+    <script type="text/template" id="new-user-story-template">
+    
+      <div class="modal-header">
+        <h3>New user story</h3>
+      </div>
+      
+      <div class="modal-body">
+        
+        <div class="alert" data-id="alert"></div>
+        
+        <form class="form-horizontal">
+          <fieldset>
+          
+            <div class="control-group" data-id="scenario-control-group">
+            
+              <label class="control-label" for="scenario">Scenario</label>
+              
+              <div class="controls">
+                <input type="text" class="input-xlarge" data-id="scenario" placeholder="Adding a valid product">
+              </div>
+              
+            </div>
+            
+            <div class="control-group" data-id="given-control-group">
+            
+              <label class="control-label" for="given">Given</label>
+              
+              <div class="controls">
+                <input type="text" class="input-xlarge" data-id="given" placeholder="Add new product clicked">
+              </div>
+              
+            </div>
+            
+            <div class="control-group" data-id="when-control-group">
+            
+              <label class="control-label" for="given">When</label>
+              
+              <div class="controls">
+                <input type="text" class="input-xlarge" data-id="when" placeholder="Required fields are filled">
+              </div>
+              
+            </div>
+            
+            <div class="control-group" data-id="then-control-group">
+            
+              <label class="control-label" for="then">Then</label>
+              
+              <div class="controls">
+                <input type="text" class="input-xlarge" data-id="then" placeholder="Product will be added">
+              </div>
+              
+            </div>
+          </fieldset>
+        </form>
+        
+      </div>
+      
+      <div class="modal-footer">
+        <a href="#" class="btn" data-id="cancel">Cancel</a>
+        <a href="#" class="btn btn-success" data-id="add">Add user story</a>
+      </div>
+    
+    </script>
+    
     <!-- Product list -->
     <script type="text/template" id="product-list-template">
     
@@ -224,6 +288,7 @@
     <script type="text/template" id="product-template">
     
       <div class="pull-right">
+          <a class="btn btn" href="#" data-id="new-user-story">New user story</a>
           <a class="btn btn-danger" href="#" data-id="delete">
             <i class="icon-trash icon-white"></i> Delete
           </a>
@@ -237,7 +302,7 @@
         <dd>{{productOwner.username}}</dd>
         
         <dt>Created on</dt>
-        <dd>{{formattedWhen}}</dd>
+        <dd>{{formattedWhenAdded}}</dd>
         
       </dl>
     
