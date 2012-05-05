@@ -10,6 +10,7 @@
     
     <!-- JS -->
     <script type="application/javascript" src="static/js/jquery-1.7.1.min.js"></script>
+    <script type="application/javascript" src="static/js/jquery-ui-1.8.20.custom.min.js"></script>
     <script type="application/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
     <script type="application/javascript" src="static/js/underscore-min.js"></script>
     <script type="application/javascript" src="static/js/backbone-min.js"></script>
@@ -288,7 +289,8 @@
     <script type="text/template" id="user-story-table-item-template">
       
       <tr>
-        <td>{{scenario}}</td>
+        <td>{{index}}</td>
+        <td><a href="#/product/{{productId}}/story/{{index}}">{{scenario}}</a></td>
       </tr>
       
     </script>
@@ -296,14 +298,18 @@
     <!-- Product -->
     <script type="text/template" id="product-template">
     
-      <div class="pull-right">
-          <a class="btn btn" href="#" data-id="new-user-story">New user story</a>
-          <a class="btn btn-danger" href="#" data-id="delete">
-            <i class="icon-trash icon-white"></i> Delete
-          </a>
+      <div class="row">
+        <div class="pull-right">
+            <a class="btn btn" href="#" data-id="new-user-story">New user story</a>
+            <a class="btn btn-danger" href="#" data-id="delete">
+              <i class="icon-trash icon-white"></i> Delete
+            </a>
+        </div>
       </div>
     
       <h3>{{name}}</h3>
+      
+      <hr>
       
       <dl class="dl-horizontal">
       
@@ -314,14 +320,17 @@
         <dd>{{formattedWhenAdded}}</dd>
         
       </dl>
+        
+      <hr>
       
       <div class="alert" data-id="alert">
       
       </div>
       
-      <table class="table" id="user-story-table">
+      <table class="table table-striped" id="user-story-table">
         <thead>
           <tr>
+            <th>#</th>
             <th>Scenario</th>
           </tr>
         </thead>
@@ -330,6 +339,48 @@
         </tbody>
       </table>
     
+    </script>
+    
+    <!-- User story -->
+    <script type="text/template" id="user-story-template">
+    
+      <div class="row">
+        <div class="pull-right">
+            <a class="btn btn-danger" href="#" data-id="delete">
+              <i class="icon-trash icon-white"></i> Delete
+            </a>
+        </div>
+      </div>
+    
+      <h3>{{scenario}}</h3>
+      
+      <hr>
+      
+      <dl class="dl-horizontal">
+      
+        <dt>Creator</dt>
+        <dd>{{creator.username}}</dd>
+        
+        <dt>Added on</dt>
+        <dd>{{formattedWhenCreated}}</dd>
+        
+      </dl>
+      
+      <dl class="dl-horizontal">
+      
+        <dt>Given</dt>
+        <dd>{{given}}</dd>
+        
+        <dt>When</dt>
+        <dd>{{when}}</dd>
+        
+        <dt>Then</dt>
+        <dd>{{then}}</dd>
+        
+      </dl>
+      
+      <hr>
+      
     </script>
   </body>
 </html>

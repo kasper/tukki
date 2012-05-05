@@ -34,9 +34,15 @@ public class ProductController extends JSONBaseController {
     
     @RequestMapping(method = RequestMethod.GET, value = "product/{id}")
     @ResponseBody
-    public Product getProduct(@PathVariable String id) {
+    public Object getProduct(@PathVariable String id) {
         
-        return productService.findById(id);
+        Product product = productService.findById(id);
+        
+        if (product == null) {
+            return new JSONMessage(JSONMessageCode.NOT_FOUND, "Product not found.");
+        }
+        
+        return product;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "product", consumes = "application/json")
@@ -48,15 +54,20 @@ public class ProductController extends JSONBaseController {
         
         return productService.save(product);
     }
-    
+        
     @RequestMapping(method = RequestMethod.DELETE, value = "product/{id}")
     @ResponseBody
     public JSONMessage deleteProduct(@PathVariable String id) {
         
-        User authenticatedUser = userService.findByUsername(authenticationService.getUsername());
         Product product = productService.findById(id);
         
-        if (!product.canBeDeletedBy(authenticatedUser)) {
+        if (product == null) {
+            return new JSONMessage(JSONMessageCode.NOT_FOUND, "Product not found.");
+        }
+        
+        User authenticatedUser = userService.findByUsername(authenticationService.getUsername());
+        
+        if (!product.isProductOwner(authenticatedUser)) {
             return new JSONMessage(JSONMessageCode.GENERAL_ERROR, "Only the product owner can delete the product.");
         }
         

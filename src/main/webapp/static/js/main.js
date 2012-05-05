@@ -378,23 +378,7 @@ tukki.views.DeleteConfirmation = Backbone.View.extend({
   delete: function(event) {
   
     event.preventDefault();
-    
-    var self = this;
-    
-    // Delete model
-    this.model.destroy({
-    
-      success: function(data) {
-      
-        $(self.el).modal('hide');
-        tukki.app.navigate('/', {trigger: true});
-      },
-      
-      error: function(data) {    
-        console.log('Error while deleting product.');
-      }
-    
-    });
+    this.options.destroy();
   }
 
 });
@@ -677,9 +661,13 @@ tukki.views.UserStoryTableItem = Backbone.View.extend({
   
   render: function() {
   
+    var model = this.model.toJSON();
+    model.productId = this.model.options.productId;
+    model.index = this.model.options.index;
+  
     // Display list item
     var userStoryTableItemTemplate = $('#user-story-table-item-template').html();
-    var output = Mustache.render(userStoryTableItemTemplate, this.model.toJSON());
+    var output = Mustache.render(userStoryTableItemTemplate, model);
     $(this.el).append(output);
   }
   
@@ -720,9 +708,10 @@ tukki.views.Product = Backbone.View.extend({
     
     tukki.controllers.Authentication.user(function(authenticationUser) {
       
-      // Only the product owner can delete the product
+      // Only the product owner can delete the product and sort user stories
       if (authenticationUser.username == model.productOwner.username) {
         self.$('[data-id="delete"]').show();
+        self.sortable();
       }
     });
     
@@ -749,8 +738,12 @@ tukki.views.Product = Backbone.View.extend({
     var tableBodyElement = this.$('#user-story-table tbody');
     $(tableBodyElement).empty();
     
+    var self = this;
+    
     // Display each table item
-    this.collection.each(function(model) {
+    this.collection.each(function(model, index) {
+      model.options.productId = self.model.id; 
+      model.options.index = index + 1;
       new tukki.views.UserStoryTableItem({el: tableBodyElement, model: model})
     });
   },
@@ -758,13 +751,116 @@ tukki.views.Product = Backbone.View.extend({
   delete: function(event) {
     
     event.preventDefault();
-    new tukki.views.DeleteConfirmation({el: $('#modal'), model: this.model});
+    
+    var self = this;
+    
+    new tukki.views.DeleteConfirmation({el: $('#modal'),
+    
+      destroy: function() {
+        
+        var view = this;
+        
+        // Delete product
+        self.model.destroy({
+    
+          success: function(data) {
+      
+            $(view.el).modal('hide');
+            tukki.app.navigate('/', {trigger: true});
+          },
+      
+          error: function(data) {    
+            console.log('Error while deleting product.');
+          }
+        });
+      }
+    });
   },
   
   newUserStory: function(event) {
     
     event.preventDefault();
     new tukki.views.NewUserStory({el: $('#modal'), model: this.model, collection: this.collection});
+  },
+  
+  sortable: function() {
+    
+    // Preserve width of cells
+    var helper = function(event, ui) {
+      
+      ui.children().each(function() {
+		    $(this).width($(this).width());
+      });
+	   
+	   return ui;
+    };
+    
+    var self = this;
+    
+    // Sortable
+    this.$('#user-story-table tbody').sortable({helper: helper,
+    
+      start: function(event, ui) {
+        ui.originalPosition.rowIndex = ui.item.context.rowIndex;
+      },
+    
+      stop: function(event, ui) {
+      
+        var from = ui.originalPosition.rowIndex - 1;
+        var to = ui.item.context.rowIndex - 1;
+        
+        // Position did not change
+        if (to == from) {
+          return;
+        }
+        
+        // Rearrenge collection
+        var userStory = self.options.collection.at(from);
+        self.options.collection.remove(userStory);
+        self.options.collection.add(userStory, {at: to});
+        
+        // Prioritise
+        $.ajax({
+        
+          url: '/api/product/' + self.model.id + '/story/' + from + '/to/' + to, 
+          type: 'PUT'
+        });
+      }
+    });
+  }
+
+});
+
+tukki.views.UserStory = Backbone.View.extend({
+
+  events: {
+  
+    'click [data-id="delete"]': 'delete'
+    
+  },
+
+  initialize: function() {
+    this.render();
+  },
+  
+  render: function() {
+  
+    $(this.el).undelegate();
+    
+    var model = this.model.toJSON().stories[this.options.index - 1];
+    
+    model.formattedWhenCreated = new Date(model.whenCreated).format('mmmm dS, yyyy');
+    
+    // Display user story
+    var productTemplate = $('#user-story-template').html();
+    var output = Mustache.render(productTemplate, model);
+    $(this.el).html(output);
+  },
+  
+  delete: function(event) {
+    
+    event.preventDefault();
+    new tukki.views.DeleteConfirmation({el: $('#modal')});
   }
 
 });
@@ -919,10 +1015,11 @@ tukki.routers.Product = Backbone.Router.extend({
 
   routes: {
   
-    '':             'index',
-    '/':            'index',
-    '/products':    'products',
-    '/product/:id': 'product'
+    '':                                 'index',
+    '/':                                'index',
+    '/products':                        'products',
+    '/product/:id':                     'product',
+    '/product/:productId/story/:index': 'userStory'
      
   },
   
@@ -1022,6 +1119,17 @@ tukki.routers.Product = Backbone.Router.extend({
     });
   },
   
+  // Show story
+  userStory: function(productId, index) {
+  
+    var self = this;
+  
+    this.fetchProduct(productId, function(product) {
+      self.renderNavigation();
+      self.renderUserStory(product, index);
+    });
+  },
+  
   // Render navigation
   renderNavigation: function() {
     
@@ -1050,6 +1158,15 @@ tukki.routers.Product = Backbone.Router.extend({
     stories.on("add", function() {
       productView.renderUserStories();
     });
+    
+    stories.on("delete", function() {
+      productView.renderUserStories();
+    });
+  },
+  
+  // Render user story
+  renderUserStory: function(product, index) {
+    var userStoryView = new tukki.views.UserStory({el: $('#content'), model: product, index: index});
   }
   
 });

@@ -21,19 +21,18 @@ public class ProductTest {
     }
     
     @Test
-    public void canBeDeletedByProductOwner() {
+    public void isProductOwner() {
         
         User productOwner = new UserStub("testProductOwnerId");    
         
         Product product = new Product();
         product.setProductOwner(productOwner);
         
-        assertTrue(product.canBeDeletedBy(productOwner));
-        
+        assertTrue(product.isProductOwner(productOwner));
     }
     
     @Test
-    public void cannotBeDeletedByOthers() {
+    public void isNotProductOwner() {
         
         User productOwner = new UserStub("testProductOwnerId");
         
@@ -42,6 +41,6 @@ public class ProductTest {
         
         User user = new UserStub("testUserId");
         
-        assertFalse(product.canBeDeletedBy(user));
+        assertFalse(product.isProductOwner(user));
     }
 }

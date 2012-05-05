@@ -13,7 +13,7 @@ public class Product extends MongoObject {
     
     private Date whenAdded;
     
-    @NotBlank(message = "Name may not be empty.")
+    @NotBlank(message = "Product name may not be empty.")
     private String name;
     
     @JsonIgnore
@@ -29,7 +29,7 @@ public class Product extends MongoObject {
         whenAdded = new Date();
         stories = new ArrayList<UserStory>();
     }
-
+    
     public Date getWhenAdded() {
         return whenAdded;
     }
@@ -49,7 +49,7 @@ public class Product extends MongoObject {
     public User getProductOwner() {
         return productOwner;
     }
-
+    
     public void setProductOwner(User productOwner) {
         
         this.productOwnerId = productOwner.getId();
@@ -60,7 +60,7 @@ public class Product extends MongoObject {
         return stories;
     }
     
-    public boolean canBeDeletedBy(User user) {
+    public boolean isProductOwner(User user) {
         
         if (user.equals(getProductOwner())) {
             return true;
@@ -71,5 +71,11 @@ public class Product extends MongoObject {
     
     public void addUserStory(UserStory story) {
         stories.add(story);
+    }
+    
+    public void prioritiseUserStory(int from, int to) {
+        
+        UserStory story = stories.remove(from);
+        stories.add(to, story);
     }
 }
