@@ -135,7 +135,7 @@ tukki.views.Login = Backbone.View.extend({
   },
   
   // Login
-  login: function() {
+  login: function(event) {
     
     event.preventDefault();
       
@@ -195,7 +195,7 @@ tukki.views.Login = Backbone.View.extend({
   
     // Enter pressed
     if (event.which == 13) {
-      this.login();
+      this.login(event);
       return;
     }
   
@@ -241,7 +241,7 @@ tukki.views.Register = Backbone.View.extend({
     });
   },
   
-  register: function() {
+  register: function(event) {
   
     event.preventDefault();
   
@@ -354,7 +354,7 @@ tukki.views.Register = Backbone.View.extend({
   
     // Enter pressed
     if (event.which == 13) {
-      this.register();
+      this.register(event);
       return;
     }
     
