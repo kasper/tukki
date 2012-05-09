@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import wad.tukki.models.Product;
+import wad.tukki.models.Task;
 import wad.tukki.models.User;
 import wad.tukki.models.UserStory;
 
@@ -141,5 +142,38 @@ public class ProductServiceTest {
         }
         
         assertEquals(expectedStoryCreators, actualStoryCreators);
+    }
+    
+    @Test
+    public void taskCreatorsResolved() {
+        
+        User user = userService.save(new User());
+             
+        Product product = new Product();
+        
+        UserStory story = new UserStory();
+        story.setCreator(user);
+        
+        Task task = new Task();
+        task.setCreator(user);
+        story.addTask(task);
+        
+        product.addUserStory(story);
+        
+        product = productService.save(product);
+        
+        List<User> expectedTaskCreators = new ArrayList<User>();
+        expectedTaskCreators.add(user);
+        
+        List<User> actualTaskCreators = new ArrayList<User>();
+        
+        for (UserStory actualStory : product.getStories()) {
+            
+            for (Task actualTask : actualStory.getTasks()) {
+                actualTaskCreators.add(actualTask.getCreator());
+            }
+        }
+        
+        assertEquals(expectedTaskCreators, expectedTaskCreators);
     }
 }

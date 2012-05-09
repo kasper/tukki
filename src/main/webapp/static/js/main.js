@@ -49,6 +49,20 @@ tukki.models.UserStory = Backbone.Model.extend({
   
 });
 
+tukki.models.Task = Backbone.Model.extend({
+
+  initialize: function(attributes, options) {
+    
+    this.attributes = attributes;
+    this.options = options;
+  },
+
+  urlRoot: function() {
+    return 'api/product/' + this.options.id + '/story/' + this.options.index + '/task';
+  }
+  
+});
+
 /* Collections */
 
 tukki.collections.Products = Backbone.Collection.extend({
@@ -61,6 +75,12 @@ tukki.collections.Products = Backbone.Collection.extend({
 tukki.collections.UserStories = Backbone.Collection.extend({
 
   model: tukki.models.UserStory
+
+});
+
+tukki.collections.Tasks = Backbone.Collection.extend({
+
+  model: tukki.models.Task
 
 });
 
@@ -404,7 +424,7 @@ tukki.views.NewUserStory = Backbone.View.extend({
   
     $(this.el).undelegate();
     
-    // Display delete confirmation
+    // Display template
     var newUserStoryTemplate = $('#new-user-story-template').html();
     $(this.el).html(newUserStoryTemplate);
     
@@ -524,6 +544,107 @@ tukki.views.NewUserStory = Backbone.View.extend({
   }
   
 });
+
+tukki.views.NewTask = Backbone.View.extend({
+
+  events: {
+  
+    'click [data-id="add"]':           'addTask',
+    'click [data-id="cancel"]':        'cancel',
+    'keydown [data-id="description"]': 'keydown',
+    
+  },
+
+  initialize: function() {
+    this.render();
+  },
+  
+  render: function() {
+  
+    $(this.el).undelegate();
+    
+    // Display template
+    var newTaskTemplate = $('#new-task-template').html();
+    $(this.el).html(newTaskTemplate);
+    
+    // Hide alert
+    this.$('[data-id="alert"]').hide();
+    
+    // Show modal
+    $(this.el).modal();
+  },
+  
+  addTask: function(event) {
+  
+    event.preventDefault();
+    
+    var description = this.$('[data-id="description"]')
+                          .val()
+                          .trim();
+                             
+    var task = new tukki.models.Task({}, {id: this.model.id, index: this.options.index});
+    
+    var self = this;
+    
+    // Save task
+    task.save({description: description}, {
+    
+      success: function() {
+      
+        // Add task to collection
+        self.collection.add(task, {at: self.collection.length});
+      
+        $(self.el).modal('hide');
+      },
+      
+      error: function(model, response) {
+      
+        if (response.status == 400) {
+          
+          var errors = JSON.parse(response.responseText).errors;
+          var errorMessages = ['<b>Oh snap!</b>'];
+          
+          if (errors.description) {
+          
+            // Validation error for description
+            if (errors.description.code == 6) {
+              self.$('[data-id="description-control-group"]').addClass('error');
+              errorMessages.push(errors.description.message);
+            }
+          }
+                    
+          self.$('[data-id="alert"]').addClass('alert-error')
+                                     .html(errorMessages.join(' '))
+                                     .fadeIn();
+          
+          return;
+        }
+        
+        console.log('Error while creating new task: ' + response.status + ' ' + response.statusText + '.');
+      }
+    });
+  },
+  
+  cancel: function(event) {
+    
+    event.preventDefault();
+    $(this.el).modal('hide');
+  },
+  
+  keydown: function(event) {
+  
+    // Enter pressed
+    if (event.which == 13) {
+      this.addTask(event);
+      return;
+    }
+    
+    // Remove possible error state of targeted input
+    self.$('[data-id="' + event.currentTarget.attributes['data-id'].value + '-control-group"]').removeClass('error');
+  }
+  
+});
+
 
 tukki.views.ProductListItem = Backbone.View.extend({
 
@@ -702,6 +823,7 @@ tukki.views.Product = Backbone.View.extend({
     // Hide alert
     this.$('[data-id="alert"]').hide();
     
+    // Hide delete button
     this.$('[data-id="delete"]').hide();
     
     var self = this;
@@ -831,10 +953,32 @@ tukki.views.Product = Backbone.View.extend({
 
 });
 
+tukki.views.TaskTableItem = Backbone.View.extend({
+
+  initialize: function() {
+    this.render();
+  },
+  
+  render: function() {
+  
+    var model = this.model.toJSON();
+    model.productId = this.model.options.productId;
+    model.userStoryIndex = this.model.options.userStoryIndex;
+    model.taskIndex = this.model.options.taskIndex;
+  
+    // Display list item
+    var taskTableItemTemplate = $('#task-table-item-template').html();
+    var output = Mustache.render(taskTableItemTemplate, model);
+    $(this.el).append(output);
+  }
+  
+});
+
 tukki.views.UserStory = Backbone.View.extend({
 
   events: {
   
+    'click [data-id="new-task"]': 'newTask',
     'click [data-id="delete"]': 'delete'
     
   },
@@ -855,12 +999,80 @@ tukki.views.UserStory = Backbone.View.extend({
     var productTemplate = $('#user-story-template').html();
     var output = Mustache.render(productTemplate, model);
     $(this.el).html(output);
+    
+    // Hide alert
+    this.$('[data-id="alert"]').hide();
+    
+    this.renderTasks();
+  },
+  
+  renderTasks: function() {
+  
+    var alert = this.$('[data-id="alert"]');
+      
+    // No tasks
+    if (this.collection.length == 0) {
+      
+      $(alert).addClass('alert-info')
+              .html('No tasks.')
+              .fadeIn();
+              
+      $('#task-table').hide();
+    } else {
+      $(alert).fadeOut();
+      $('#task-table').show();
+    }
+    
+    var tableBodyElement = this.$('#task-table tbody');
+    $(tableBodyElement).empty();
+    
+    var self = this;
+    
+    // Display each table item
+    this.collection.each(function(model, index) {
+      model.options.productId = self.model.id;
+      model.options.userStoryIndex = self.options.index;
+      model.options.taskIndex = index + 1;
+      new tukki.views.TaskTableItem({el: tableBodyElement, model: model})
+    });
+  },
+  
+  newTask: function(event) {
+    
+    event.preventDefault();
+    new tukki.views.NewTask({el: $('#modal'), model: this.model, index: this.options.index - 1, collection: this.collection});
   },
   
   delete: function(event) {
     
     event.preventDefault();
-    new tukki.views.DeleteConfirmation({el: $('#modal')});
+    
+    var self = this;
+    
+    new tukki.views.DeleteConfirmation({el: $('#modal'),
+    
+    destroy: function() {
+        
+        var view = this;
+        
+        // Delete user story        
+        $.ajax({
+          
+          url: '/api/product/' + self.model.id + '/story/' + (self.options.index - 1), 
+          type: 'DELETE',
+    
+          success: function(data) {
+      
+            $(view.el).modal('hide');
+            tukki.app.navigate('#/product/' + self.model.id, {trigger: true});
+          },
+      
+          error: function(data) {  
+            console.log('Error while deleting user story.');
+          }
+        });
+      }
+    });
   }
 
 });
@@ -1166,7 +1378,17 @@ tukki.routers.Product = Backbone.Router.extend({
   
   // Render user story
   renderUserStory: function(product, index) {
-    var userStoryView = new tukki.views.UserStory({el: $('#content'), model: product, index: index});
+
+    var tasks = new tukki.collections.Tasks(product.attributes.stories[index - 1].tasks);
+    var userStoryView = new tukki.views.UserStory({el: $('#content'), model: product, index: index, collection: tasks});
+    
+    tasks.on("add", function() {
+      userStoryView.renderTasks();
+    });
+    
+    tasks.on("delete", function() {
+      userStoryView.renderTasks();
+    });
   }
   
 });

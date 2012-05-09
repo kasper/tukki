@@ -51,6 +51,10 @@ public class UserStoryController extends JSONBaseController {
             return new JSONMessage(JSONMessageCode.NOT_FOUND, "Product not found.");
         }
         
+        if (from < 0 || to >= product.getStories().size()) {
+            return new JSONMessage(JSONMessageCode.GENERAL_ERROR, "Invalid indexes.");
+        }
+        
         User authenticatedUser = userService.findByUsername(authenticationService.getUsername());
         
         if (!product.isProductOwner(authenticatedUser)) {
@@ -63,12 +67,22 @@ public class UserStoryController extends JSONBaseController {
         return new JSONMessage(JSONMessageCode.OK, "User story prioritised.");
     }
     
-    @RequestMapping(method = RequestMethod.DELETE, value = "product/{productId}/story/{userStoryId}")
+    @RequestMapping(method = RequestMethod.DELETE, value = "product/{productId}/story/{index}")
     @ResponseBody
-    public JSONMessage deleteUserStory(@PathVariable String productId, @PathVariable String userStoryId) {
+    public JSONMessage deleteUserStory(@PathVariable String productId, @PathVariable int index) {
         
-        System.out.println("Deleting user story from product: " + productId);
-        System.out.println("Deleting user story with index: " + userStoryId);
+        Product product = productService.findById(productId);
+        
+        if (product == null) {
+            return new JSONMessage(JSONMessageCode.NOT_FOUND, "Product not found.");
+        }
+        
+        if (index < 0 || index >= product.getStories().size()) {
+            return new JSONMessage(JSONMessageCode.GENERAL_ERROR, "Invalid index.");
+        }
+        
+        product.getStories().remove(index);
+        productService.save(product);
         
         return new JSONMessage(JSONMessageCode.OK, "User story deleted.");
     }

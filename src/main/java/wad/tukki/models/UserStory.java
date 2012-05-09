@@ -1,6 +1,8 @@
 package wad.tukki.models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Transient;
@@ -26,9 +28,13 @@ public class UserStory {
     
     @NotBlank(message = "Then may not be blank.")
     private String then;
+    
+    private List<Task> tasks;
 
     public UserStory() {
+        
         whenCreated = new Date();
+        tasks = new ArrayList<Task>();
     }
     
     public Date getWhenCreated() {
@@ -79,5 +85,13 @@ public class UserStory {
 
     public void setWhen(String when) {
         this.when = when;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+    
+    public void addTask(Task task) {
+        tasks.add(task);
     }
 }

@@ -1,7 +1,8 @@
 package wad.tukki.models;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.LinkedList;
+import java.util.List;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class ProductTest {
@@ -42,5 +43,25 @@ public class ProductTest {
         User user = new UserStub("testUserId");
         
         assertFalse(product.isProductOwner(user));
+    }
+    
+    @Test
+    public void prioritise() {
+        
+        Product product = new Product();
+        
+        UserStory a = new UserStory();
+        UserStory b = new UserStory();
+        
+        product.addUserStory(a);
+        product.addUserStory(b);
+        
+        product.prioritiseUserStory(1, 0);
+        
+        List<UserStory> expected = new LinkedList<UserStory>();
+        expected.add(b);
+        expected.add(a);
+        
+        assertEquals(expected, product.getStories());
     }
 }

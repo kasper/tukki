@@ -5,3 +5,7 @@ body {
 .light {
   opacity: 0.6;
 }
+
+.light-header {
+  color: gray;
+}

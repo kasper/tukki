@@ -252,6 +252,41 @@
     
     </script>
     
+    <!-- New task -->
+    <script type="text/template" id="new-task-template">
+    
+      <div class="modal-header">
+        <h3>New task</h3>
+      </div>
+      
+      <div class="modal-body">
+        
+        <div class="alert" data-id="alert"></div>
+        
+        <form class="form-horizontal">
+          <fieldset>
+          
+            <div class="control-group" data-id="description-control-group">
+            
+              <label class="control-label" for="description">Description</label>
+              
+              <div class="controls">
+                <input type="text" class="input-xlarge" data-id="description" placeholder="Create model for user">
+              </div>
+              
+            </div>
+          </fieldset>
+        </form>
+        
+      </div>
+      
+      <div class="modal-footer">
+        <a href="#" class="btn" data-id="cancel">Cancel</a>
+        <a href="#" class="btn btn-success" data-id="add">Add task</a>
+      </div>
+    
+    </script>
+    
     <!-- Product list item -->
     <script type="text/template" id="product-list-item-template">
       
@@ -291,6 +326,7 @@
       <tr>
         <td>{{index}}</td>
         <td><a href="#/product/{{productId}}/story/{{index}}">{{scenario}}</a></td>
+        <td>{{creator.username}}</td>
       </tr>
       
     </script>
@@ -308,6 +344,8 @@
       </div>
     
       <h3>{{name}}</h3>
+      
+      <h4 class="light-header">Product backlog</h4>
       
       <hr>
       
@@ -332,6 +370,7 @@
           <tr>
             <th>#</th>
             <th>Scenario</th>
+            <th>Creator</th>
           </tr>
         </thead>
         <tbody>
@@ -346,6 +385,7 @@
     
       <div class="row">
         <div class="pull-right">
+            <a class="btn btn" href="#" data-id="new-task">New task</a>
             <a class="btn btn-danger" href="#" data-id="delete">
               <i class="icon-trash icon-white"></i> Delete
             </a>
@@ -353,6 +393,7 @@
       </div>
     
       <h3>{{scenario}}</h3>
+      <h4 class="light-header">Scenario</h4>
       
       <hr>
       
@@ -380,6 +421,32 @@
       </dl>
       
       <hr>
+      
+      <div class="alert" data-id="alert">
+      
+      </div>
+      
+      <table class="table table-striped" id="task-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Creator</th>
+          </tr>
+        </thead>
+        <tbody>
+        
+        </tbody>
+      </table>
+      
+    </script>
+    
+    <!-- Task table item -->
+    <script type="text/template" id="task-table-item-template">
+      
+      <tr>
+        <td>{{description}}</td>
+        <td>{{creator.username}}</td>
+      </tr>
       
     </script>
   </body>
