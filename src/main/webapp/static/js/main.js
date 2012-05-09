@@ -978,8 +978,9 @@ tukki.views.UserStory = Backbone.View.extend({
 
   events: {
   
-    'click [data-id="new-task"]': 'newTask',
-    'click [data-id="delete"]': 'delete'
+    'click [data-id="new-task"]':    'newTask',
+    'click [data-id="delete"]':      'delete',
+    'click [data-id="remove-task"]': 'removeTask'
     
   },
 
@@ -1069,6 +1070,44 @@ tukki.views.UserStory = Backbone.View.extend({
       
           error: function(data) {  
             console.log('Error while deleting user story.');
+          }
+        });
+      }
+    });
+  },
+  
+  removeTask: function(event) {
+    
+    event.preventDefault();
+    
+    var storyIndex = (this.options.index - 1);
+    var taskIndex = $(event.target.parentNode).data('index') - 1;
+    
+    var self = this;
+    
+    new tukki.views.DeleteConfirmation({el: $('#modal'),
+    
+    destroy: function() {
+        
+        var view = this;
+        
+        // Delete task
+        $.ajax({
+          
+          url: '/api/product/' + self.model.id + '/story/' + storyIndex + '/task/' + taskIndex, 
+          type: 'DELETE',
+    
+          success: function(data) {
+      
+            // Remove from collection
+            var task = self.collection.at(taskIndex);
+            self.collection.remove(task);
+      
+            $(view.el).modal('hide');
+          },
+      
+          error: function(data) {  
+            console.log('Error while removing task.');
           }
         });
       }
@@ -1386,7 +1425,7 @@ tukki.routers.Product = Backbone.Router.extend({
       userStoryView.renderTasks();
     });
     
-    tasks.on("delete", function() {
+    tasks.on("remove", function() {
       userStoryView.renderTasks();
     });
   }

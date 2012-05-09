@@ -44,4 +44,28 @@ public class TaskController extends JSONBaseController {
         
         return task;
     }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "product/{productId}/story/{storyIndex}/task/{taskIndex}")
+    @ResponseBody
+    public JSONMessage deleteTask(@PathVariable String productId, @PathVariable int storyIndex, @PathVariable int taskIndex) {
+        
+        Product product = productService.findById(productId);
+        
+        if (product == null) {
+            return new JSONMessage(JSONMessageCode.NOT_FOUND, "Product not found.");
+        }
+        
+        if (storyIndex < 0 || storyIndex >= product.getStories().size()) {
+            return new JSONMessage(JSONMessageCode.GENERAL_ERROR, "Invalid index.");
+        }
+        
+        if (taskIndex < 0 || taskIndex >= product.getStories().get(storyIndex).getTasks().size()) {
+            return new JSONMessage(JSONMessageCode.GENERAL_ERROR, "Invalid index.");
+        }
+        
+        product.getStories().get(storyIndex).getTasks().remove(taskIndex);
+        productService.save(product);
+        
+        return new JSONMessage(JSONMessageCode.OK, "Task deleted.");
+    }
 }
