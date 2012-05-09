@@ -714,7 +714,7 @@ tukki.views.ProductList = Backbone.View.extend({
   },
   
   // Add product
-  addProduct: function() {
+  addProduct: function(event) {
   
     event.preventDefault();
       
