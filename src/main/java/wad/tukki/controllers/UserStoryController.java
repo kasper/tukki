@@ -51,10 +51,6 @@ public class UserStoryController extends JSONBaseController {
             return new JSONMessage(JSONMessageCode.NOT_FOUND, "Product not found.");
         }
         
-        if (from < 0 || to >= product.getStories().size()) {
-            return new JSONMessage(JSONMessageCode.GENERAL_ERROR, "Invalid indexes.");
-        }
-        
         User authenticatedUser = userService.findByUsername(authenticationService.getUsername());
         
         if (!product.isProductOwner(authenticatedUser)) {
@@ -75,10 +71,6 @@ public class UserStoryController extends JSONBaseController {
         
         if (product == null) {
             return new JSONMessage(JSONMessageCode.NOT_FOUND, "Product not found.");
-        }
-        
-        if (index < 0 || index >= product.getStories().size()) {
-            return new JSONMessage(JSONMessageCode.GENERAL_ERROR, "Invalid index.");
         }
         
         product.getStories().remove(index);

@@ -18,6 +18,14 @@ public class Task {
     @NotBlank(message = "Description may not be blank.")
     private String description;
     
+    @JsonIgnore
+    private String implementerId;
+    
+    @Transient
+    private User implementer;
+    
+    private boolean done;
+    
     public Task() {
         whenCreated = new Date();
     }
@@ -46,5 +54,45 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImplementerId() {
+        return implementerId;
+    }
+
+    public User getImplementer() {
+        return implementer;
+    }
+
+    public void setImplementer(User implementer) {
+        
+        if (implementer != null) {
+            this.implementerId = implementer.getId();
+        } else {
+            this.implementerId = null;
+        }
+        
+        this.implementer = implementer;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+    
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+    
+    public Status getStatus() {
+        
+        if (done) {
+            return new Status(StatusCode.DONE, "Done");
+        }
+        
+        if (implementer != null) {
+            return new Status(StatusCode.IN_PROGRESS, "In progress");
+        }
+        
+        return new Status(StatusCode.IN_QUEUE, "In queue");
     }
 }

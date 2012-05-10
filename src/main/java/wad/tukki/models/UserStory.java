@@ -94,4 +94,29 @@ public class UserStory {
     public void addTask(Task task) {
         tasks.add(task);
     }
+    
+    public Status getStatus() {
+        
+        int tasksDone = 0;
+        int tasksInProgress = 0;
+        
+        for (Task task : tasks) {
+            
+            if (task.isDone()) {
+                tasksDone++;
+            } else if (task.getStatus().getCode() == StatusCode.IN_PROGRESS) {
+                tasksInProgress++;
+            }
+        }
+        
+        if (tasksDone == tasks.size()) {
+            return new Status(StatusCode.DONE, "Done");
+        }
+        
+        if (tasksInProgress > 0) {
+            return new Status(StatusCode.IN_PROGRESS, "In progress");
+        }
+        
+        return new Status(StatusCode.IN_QUEUE, "In queue");
+    }
 }

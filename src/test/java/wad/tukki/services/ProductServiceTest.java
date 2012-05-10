@@ -176,4 +176,40 @@ public class ProductServiceTest {
         
         assertEquals(expectedTaskCreators, expectedTaskCreators);
     }
+    
+    @Test
+    public void taskImplementersResolved() {
+        
+        User creator = userService.save(new User());
+        User implementer = userService.save(new User());
+             
+        Product product = new Product();
+        
+        UserStory story = new UserStory();
+        story.setCreator(creator);
+        
+        Task task = new Task();
+        task.setCreator(creator);
+        
+        task.setImplementer(implementer);
+        story.addTask(task);
+        
+        product.addUserStory(story);
+        
+        product = productService.save(product);
+        
+        List<User> expectedTaskImplementers = new ArrayList<User>();
+        expectedTaskImplementers.add(implementer);
+        
+        List<User> actualTaskImplementers = new ArrayList<User>();
+        
+        for (UserStory actualStory : product.getStories()) {
+            
+            for (Task actualTask : actualStory.getTasks()) {
+                actualTaskImplementers.add(actualTask.getImplementer());
+            }
+        }
+        
+        assertEquals(expectedTaskImplementers, expectedTaskImplementers);
+    }
 }

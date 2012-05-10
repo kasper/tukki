@@ -9,7 +9,7 @@ var tukki = {
   initialize: function() {
   
     tukki.app = new tukki.routers.Main();
-    new tukki.routers.Product();
+    tukki.product = new tukki.routers.Product();
     Backbone.history.start();
   }
   
@@ -786,6 +786,11 @@ tukki.views.UserStoryTableItem = Backbone.View.extend({
     model.productId = this.model.options.productId;
     model.index = this.model.options.index;
   
+    // Status
+    var status = this.$('[status-index="' + model.taskIndex + '"]');
+    var statusClass = ['label-info', 'label-warning', 'label-success'];
+    model.status.class = (statusClass[this.model.attributes.status.code - 1]);
+  
     // Display list item
     var userStoryTableItemTemplate = $('#user-story-table-item-template').html();
     var output = Mustache.render(userStoryTableItemTemplate, model);
@@ -966,10 +971,32 @@ tukki.views.TaskTableItem = Backbone.View.extend({
     model.userStoryIndex = this.model.options.userStoryIndex;
     model.taskIndex = this.model.options.taskIndex;
   
+    // Status
+    var status = this.$('[status-index="' + model.taskIndex + '"]');
+    var statusClass = ['label-info', 'label-warning', 'label-success'];
+    model.status.class = (statusClass[this.model.attributes.status.code - 1]);
+  
     // Display list item
     var taskTableItemTemplate = $('#task-table-item-template').html();
     var output = Mustache.render(taskTableItemTemplate, model);
     $(this.el).append(output);
+    
+    if (model.implementer != null) {
+    
+      this.$('[data-id="toggle-implementer"]').filter('[data-index="' + model.taskIndex + '"]').hide();
+      this.$('[data-id="toggle-done"]').filter('[data-index="' + model.taskIndex + '"]').hide();
+    
+      var self = this;
+      
+      tukki.controllers.Authentication.user(function(authenticationUser) {
+        
+        // Only the implementer can toggle the task and mark it as done
+        if (authenticationUser.username == model.implementer.username) {
+          this.$('[data-id="toggle-implementer"]').filter('[data-index="' + model.taskIndex + '"]').show();
+          this.$('[data-id="toggle-done"]').filter('[data-index="' + model.taskIndex + '"]').show();
+        }
+      });
+    }
   }
   
 });
@@ -978,9 +1005,11 @@ tukki.views.UserStory = Backbone.View.extend({
 
   events: {
   
-    'click [data-id="new-task"]':    'newTask',
-    'click [data-id="delete"]':      'delete',
-    'click [data-id="remove-task"]': 'removeTask'
+    'click [data-id="new-task"]':           'newTask',
+    'click [data-id="delete"]':             'delete',
+    'click [data-id="toggle-implementer"]': 'toggleImplementer',
+    'click [data-id="toggle-done"]':        'toggleDone',
+    'click [data-id="remove-task"]':        'removeTask'
     
   },
 
@@ -992,7 +1021,7 @@ tukki.views.UserStory = Backbone.View.extend({
   
     $(this.el).undelegate();
     
-    var model = this.model.toJSON().stories[this.options.index - 1];
+    var model = this.model.attributes.stories[this.options.index - 1];
     
     model.formattedWhenCreated = new Date(model.whenCreated).format('mmmm dS, yyyy');
     
@@ -1042,6 +1071,56 @@ tukki.views.UserStory = Backbone.View.extend({
     
     event.preventDefault();
     new tukki.views.NewTask({el: $('#modal'), model: this.model, index: this.options.index - 1, collection: this.collection});
+  },
+  
+  toggleImplementer: function(event) {
+  
+    event.preventDefault();
+        
+    var storyIndex = (this.options.index - 1);
+    var taskIndex = $(event.target.parentNode).data('index') - 1;
+    
+    var self = this;
+    
+    // Toggle implementer
+    $.ajax({
+      
+      url: '/api/product/' + self.model.id + '/story/' + storyIndex + '/task/' + taskIndex + '/implementer', 
+      type: 'PUT',
+    
+      success: function(data) {
+        tukki.product.userStory(self.model.id, storyIndex + 1);
+      },
+    
+      error: function(data) {  
+        console.log('Error while toggling implementer.');
+      }
+    });
+  },
+  
+  toggleDone: function(event) {
+  
+    event.preventDefault();
+    
+    var storyIndex = (this.options.index - 1);
+    var taskIndex = $(event.target.parentNode).data('index') - 1;
+    
+    var self = this;
+    
+    // Toggle done
+    $.ajax({
+      
+      url: '/api/product/' + self.model.id + '/story/' + storyIndex + '/task/' + taskIndex + '/done', 
+      type: 'PUT',
+    
+      success: function(data) {
+        tukki.product.userStory(self.model.id, storyIndex + 1);
+      },
+    
+      error: function(data) {  
+        console.log('Error while toggling done.');
+      }
+    });
   },
   
   delete: function(event) {

@@ -22,6 +22,7 @@ public class ProductServiceImplementation implements ProductService {
         resolveProductOwner(products);
         resolveUserStoryCreators(products);
         resolveTaskCreators(products);
+        resolveTaskImplementers(products);
     }
     
     private void resolveProductOwner(Product... products) {
@@ -52,6 +53,24 @@ public class ProductServiceImplementation implements ProductService {
                 
                 for (Task task : story.getTasks()) {
                     task.setCreator(userService.findById(task.getCreatorId()));
+                }
+            }
+        }
+    }
+    
+    private void resolveTaskImplementers(Product... products) {
+        
+        for (Product product : products) {
+            
+            for (UserStory story: product.getStories()) {
+                
+                for (Task task : story.getTasks()) {
+                    
+                    if (task.getImplementerId() == null) {
+                        continue;
+                    }
+                    
+                    task.setImplementer(userService.findById(task.getImplementerId()));
                 }
             }
         }

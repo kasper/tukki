@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import wad.tukki.exceptions.ItemNotFoundException;
 import wad.tukki.models.JSONMessage;
 import wad.tukki.models.JSONMessageCode;
 import wad.tukki.models.Product;
@@ -34,12 +35,12 @@ public class ProductController extends JSONBaseController {
     
     @RequestMapping(method = RequestMethod.GET, value = "product/{id}")
     @ResponseBody
-    public Object getProduct(@PathVariable String id) {
+    public Product getProduct(@PathVariable String id) throws ItemNotFoundException {
         
         Product product = productService.findById(id);
         
         if (product == null) {
-            return new JSONMessage(JSONMessageCode.NOT_FOUND, "Product not found.");
+            throw new ItemNotFoundException("Product not found.");
         }
         
         return product;
@@ -57,12 +58,12 @@ public class ProductController extends JSONBaseController {
         
     @RequestMapping(method = RequestMethod.DELETE, value = "product/{id}")
     @ResponseBody
-    public JSONMessage deleteProduct(@PathVariable String id) {
+    public JSONMessage deleteProduct(@PathVariable String id) throws ItemNotFoundException {
         
         Product product = productService.findById(id);
         
         if (product == null) {
-            return new JSONMessage(JSONMessageCode.NOT_FOUND, "Product not found.");
+            throw new ItemNotFoundException("Product not found.");
         }
         
         User authenticatedUser = userService.findByUsername(authenticationService.getUsername());

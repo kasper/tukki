@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import wad.tukki.exceptions.ItemNotFoundException;
 import wad.tukki.models.JSONMessage;
 import wad.tukki.models.JSONMessageCode;
 import wad.tukki.models.JSONMessageMap;
@@ -36,6 +37,20 @@ public abstract class JSONBaseController {
     @ResponseBody
     public JSONMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         return new JSONMessage(JSONMessageCode.INVALID_JSON, "Invalid JSON format.");
+    }
+    
+    @ExceptionHandler(ItemNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public JSONMessage handleItemNotFoundException(ItemNotFoundException exception) {
+        return new JSONMessage(JSONMessageCode.NOT_FOUND, exception.getMessage());
+    }
+    
+    @ExceptionHandler(IndexOutOfBoundsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public JSONMessage handleIndexOutOfBoundException(IndexOutOfBoundsException exception) {
+        return new JSONMessage(JSONMessageCode.GENERAL_ERROR, "Invalid index.");
     }
     
     @ExceptionHandler(Exception.class)

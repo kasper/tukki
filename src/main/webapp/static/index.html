@@ -327,6 +327,11 @@
         <td>{{index}}</td>
         <td><a href="#/product/{{productId}}/story/{{index}}">{{scenario}}</a></td>
         <td>{{creator.username}}</td>
+        <td>
+          <span class="label {{status.class}}">
+            {{status.message}}
+          </span>
+        </td>
       </tr>
       
     </script>
@@ -371,6 +376,7 @@
             <th>#</th>
             <th>Scenario</th>
             <th>Creator</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -431,6 +437,9 @@
           <tr>
             <th>Task</th>
             <th>Creator</th>
+            <th>Implementer</th>
+            <th>Status</th>
+            <th>Commands</th>
           </tr>
         </thead>
         <tbody>
@@ -446,7 +455,29 @@
       <tr>
         <td>{{description}}</td>
         <td>{{creator.username}}</td>
-        <td><a href="#" data-id="remove-task" data-index="{{taskIndex}}"><i class="icon-remove"></i></a></td>
+        <td>
+          {{implementer.username}}
+        </td>
+        <td>
+          <span class="label {{status.class}}">
+            {{status.message}}
+          </span>
+        </td>
+        <td>
+          {{^implementer}}
+            <a href="#" data-id="toggle-implementer" data-index="{{taskIndex}}"><i class="icon-bookmark" title="Take task"></i></a>
+          {{/implementer}}
+          
+          {{#implementer}}
+            <a href="#" data-id="toggle-implementer" data-index="{{taskIndex}}"><i class="icon-bookmark light" title="Untake task"></i></a>
+          {{/implementer}}
+          
+          {{#implementer}}
+            <a href="#" data-id="toggle-done" data-index="{{taskIndex}}"><i class="icon-ok" title="Mark as done"></i></a>
+          {{/implementer}}
+          
+          <a href="#" data-id="remove-task" data-index="{{taskIndex}}"><i class="icon-remove" title="Remove task"></i></a>
+        </td>
       </tr>
       
     </script>
