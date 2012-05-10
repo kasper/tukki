@@ -472,6 +472,7 @@
             <a href="#" data-id="toggle-implementer" data-index="{{taskIndex}}"><i class="icon-bookmark light" title="Untake task"></i></a>
           {{/implementer}}
           
+          {{#implementer}}
           {{^done}}
             <a href="#" data-id="toggle-done" data-index="{{taskIndex}}"><i class="icon-ok" title="Mark as done"></i></a>
           {{/done}}
@@ -479,6 +480,7 @@
           {{#done}}
             <a href="#" data-id="toggle-done" data-index="{{taskIndex}}"><i class="icon-ok light" title="Unmark as done"></i></a>
           {{/done}}
+          {{/implementer}}
           
           <a href="#" data-id="remove-task" data-index="{{taskIndex}}"><i class="icon-remove" title="Remove task"></i></a>
         </td>
